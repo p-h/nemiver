@@ -1,584 +1,1519 @@
-# Occitan translation of nemiver documentation.
-# Copyright (C) 2007 Free Software Foundation, Inc.
-# This file is distributed under the same license as the gnome-cd documentation package.
-#
+# Occitan translation of nemiver.
+# Copyright (C) 2006 Dodji Seketeli & Jonathon Jongsma
+# This file is distributed under the same license as the nemiver package.
 # Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>, 2007.
+# Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-06-10 04:14+0100\n"
-"PO-Revision-Date: 2007-12-29 18:53+0100\n"
-"Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
-"Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver"
+"&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2015-12-09 08:08+0000\n"
+"PO-Revision-Date: 2016-03-03 22:34+0200\n"
+"Last-Translator: Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>\n"
+"Language-Team: Tot En Òc\n"
+"Language: oc\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Virtaal 0.7.1\n"
+"X-Project-Style: gnome\n"
 
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:133(None)
-msgid "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
-msgstr "@@image: 'figures/main-window.png'; md5=98f9a8b2b358e34d5ae09619332e6557"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:293(None)
-msgid "@@image: 'figures/execute-dialog.png'; md5=4ed2b568c68c30613fe0474dadd0d6ab"
-msgstr "@@image: 'figures/execute-dialog.png'; md5=4ed2b568c68c30613fe0474dadd0d6ab"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:363(None)
-msgid "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
-msgstr "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:412(None)
-msgid "@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b03621"
-msgstr "@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b03621"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:530(None)
-msgid "@@image: 'figures/variable-inspector.png'; md5=288952a65ba8c54d2003c38a6f1f0eb7"
-msgstr "@@image: 'figures/variable-inspector.png'; md5=288952a65ba8c54d2003c38a6f1f0eb7"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:590(None)
-msgid "@@image: 'figures/set-breakpoint-dialog.png'; md5=d67a22068597943204b452ad59a690ce"
-msgstr "@@image: 'figures/set-breakpoint-dialog.png'; md5=d67a22068597943204b452ad59a690ce"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:641(None)
-msgid "@@image: 'figures/open-files-target.png'; md5=372c30907bb4f1d25e7e966d85c42de2"
-msgstr "@@image: 'figures/open-files-target.png'; md5=372c30907bb4f1d25e7e966d85c42de2"
-
-#. When image changes, this message will be marked fuzzy or untranslated for you.
-#. It doesn't matter what you translate it to: it's not used at all.
-#: C/nemiver.xml:704(None)
-msgid "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
-msgstr "@@image: 'figures/sessions-dialog.png'; md5=b3e9731d03539a638a366ca724463a03"
-
-#: C/nemiver.xml:25(title)
-msgid "Nemiver Manual"
-msgstr "Manual de Nemiver"
-
-#: C/nemiver.xml:27(year)
-#: C/nemiver.xml:74(date)
-msgid "2007"
-msgstr "2007"
-
-#: C/nemiver.xml:28(holder)
-msgid "Jonathon Jongsma"
-msgstr "Jonathon Jongsma"
-
-#: C/nemiver.xml:39(publishername)
-msgid "Nemiver Project"
-msgstr "Projècte Nemiver"
-
-#: C/nemiver.xml:46(firstname)
-msgid "Jonathon"
-msgstr "Jonathon"
-
-#: C/nemiver.xml:47(surname)
-msgid "Jongsma"
-msgstr "Jongsma"
-
-#: C/nemiver.xml:49(orgname)
-msgid "GNOME"
-msgstr "GNOME"
-
-#: C/nemiver.xml:73(revnumber)
-msgid "1.0"
-msgstr "1.0"
-
-#: C/nemiver.xml:76(para)
-msgid "Initial version"
-msgstr "Version iniciala"
-
-#: C/nemiver.xml:80(releaseinfo)
-msgid "This manual describes version 0.3.0 of Nemiver."
-msgstr ""
-
-#: C/nemiver.xml:83(title)
-msgid "Feedback"
-msgstr ""
-
-#: C/nemiver.xml:84(para)
-msgid "To report a bug or make a suggestion regarding the <application>Nemiver</application> application or this manual, see the <ulink url=\"http://home.gna.org/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
-msgstr ""
-
-#: C/nemiver.xml:92(para)
-msgid "Nemiver is a graphical debugger for the GNOME desktop environment."
-msgstr ""
-
-#: C/nemiver.xml:97(primary)
+#: ../data/nemiver.appdata.xml.in.h:1 ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
 msgid "Nemiver"
 msgstr "Nemiver"
 
-#: C/nemiver.xml:98(primary)
-msgid "debugger"
+#: ../data/nemiver.appdata.xml.in.h:2 ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Desbugar d'aplicacions"
+
+#: ../data/nemiver.appdata.xml.in.h:3
+msgid ""
+"Nemiver is an on-going effort to write a standalone graphical debugger that "
+"integrates well in the GNOME desktop environment. It currently features a "
+"backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
 msgstr ""
+"Nemiver es un projècte continú d'escritura d'un desbugador grafic autonòm "
+"que s'intègra armoniosament a l'environament de burèu GNOME. Se basa "
+"actualament sus un motor qu'utiliza lo desbogador GNU plan conegut gdb pel "
+"desbugatge dels programas C/C++."
 
-#: C/nemiver.xml:99(primary)
-msgid "gdb"
+#: ../data/nemiver.appdata.xml.in.h:4
+msgid ""
+"We believe that Nemiver is mature and robust enough to just let you debug "
+"your favorite C or C++ application in a pleasant way."
 msgstr ""
+"Pensam que Nemiver es pro madur e robuste per permetre de desbugar vòstra "
+"aplicacion C o C++ favorita d'un biais agradiu."
 
-#: C/nemiver.xml:104(title)
-msgid "Introduction"
-msgstr "Introduccion"
+#: ../data/nemiver.desktop.in.h:2
+msgid "C/C++ Debugger"
+msgstr "Desbugador C/C++"
 
-#: C/nemiver.xml:105(para)
-msgid "Nemiver is an ongoing effort to write a standalone graphical debugger that integrates well in the GNOME desktop environment. It currently features a backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
+#: ../data/nemiver.desktop.in.h:3
+msgid "Nemiver C/C++ Debugger"
+msgstr "Desbugador C/C++ Nemiver"
+
+#: ../data/nemiver.desktop.in.h:5
+msgid "gdb;disassembler;debugger;c;c++;"
+msgstr "gdb;desassemblador;desbugador;c;c++;"
+
+#: ../src/main.cc:78
+msgid "Set the environment of the program to debug"
+msgstr "Definís l'environament del programa a desbugar"
+
+#: ../src/main.cc:87
+msgid "Attach to a process"
+msgstr "S'estaca a un processus en cors"
+
+#: ../src/main.cc:96
+msgid "Load a core file"
+msgstr "Carga un fichièr core"
+
+#: ../src/main.cc:104
+msgid "List the saved debugging sessions"
+msgstr "Lista las sessions de desbugatge enregistradas"
+
+#: ../src/main.cc:112
+msgid "Erase the saved debugging sessions"
+msgstr "Escafa las sessions de desbugatge enregistradas"
+
+#: ../src/main.cc:120
+msgid "Debug the program that was of session number N"
+msgstr "Desbòga lo programa que lo numèro de session n'es N"
+
+#: ../src/main.cc:128
+msgid "Execute the last session"
+msgstr "Executa la darrièra session"
+
+#: ../src/main.cc:136
+msgid "Enable logging domains DOMAINS"
+msgstr "Activa la jornalizacion dels domenis DOMAINS"
+
+#: ../src/main.cc:144
+msgid "Log the debugger output"
+msgstr "Traça la sortida del desbugador"
+
+#: ../src/main.cc:152
+msgid "Use this terminal as the debugee's terminal"
+msgstr "Utiliza aqueste terminal en tant que terminal de desbugatge"
+
+#: ../src/main.cc:161
+msgid "Connect to remote target specified by HOST:PORT"
+msgstr "Se connectar a la cibla distanta indicada jos la forma ÒSTE:PORT."
+
+#: ../src/main.cc:170
+msgid ""
+"Where to look for shared libraries loaded by the inferior. Use in "
+"conjunction with --remote"
 msgstr ""
+"Ont recercar las bibliotècas partejadas cargadas per l'inferior. Utilizat "
+"conjuntament amb --remote"
 
-#: C/nemiver.xml:112(title)
-msgid "Perspectives"
+#: ../src/main.cc:180
+msgid "Set the path of the GDB binary to use to debug the inferior"
+msgstr "Definir lo camin del binari GDB d'utilizar per desbugar l'inferior"
+
+#: ../src/main.cc:189
+msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
 msgstr ""
+"Definir pas un punt d'arrèst dins « main » e executar pas tanpauc  l'inferior"
 
-#: C/nemiver.xml:113(para)
-msgid "Nemiver is built with a plugin system that can offer several different perspectives. Currently the only perspective provided is a debugging perspective, but in the future, there may be perspectives added for valgrind, or for profiling tools such as oprofile."
+#: ../src/main.cc:198
+msgid "Show the version number of Nemiver"
+msgstr "Aficha lo numèro de version de Nemiver"
+
+#: ../src/main.cc:264
+msgid " [<prog-to-debug> [prog-args]]"
+msgstr " [<prog-de-desbugar> [prog-args]]"
+
+#: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
+msgid "A C/C++ debugger for GNOME"
+msgstr "Un desbugador C/C++ per GNOME"
+
+#: ../src/main.cc:361
+msgid ""
+"Please provide a local copy of the binary you intend to debug remotely.\n"
+"Like this:\n"
 msgstr ""
+"Provesissètz una còpia locala del binari que volètz desbugar a distància.\n"
+"Coma aquò :\n"
 
-#: C/nemiver.xml:123(title)
-msgid "The Nemiver window"
-msgstr "La fenèstra de Nemiver"
-
-#: C/nemiver.xml:124(para)
-msgid "When you start Nemiver, you will see a window that looks very much like the following:"
+#: ../src/main.cc:366 ../src/main.cc:385
+msgid "Otherwise, find below the full set of Nemiver options.\n"
 msgstr ""
+"Siquenon, recercatz çaijós l'ensemble complet de las opcions de Nemiver.\n"
 
-#: C/nemiver.xml:129(title)
-msgid "Nemiver Window"
-msgstr "Fenèstra de Nemiver"
-
-#: C/nemiver.xml:135(phrase)
-msgid "Shows Nemiver main window."
+#: ../src/main.cc:380
+msgid ""
+"Please provide the path to the binary that generated the core file too.\n"
+"Like this:\n"
 msgstr ""
+"Provesissètz tanben lo camin cap al binari qu'a generat lo fichièr core.\n"
+"Coma aquò :\n"
 
-#: C/nemiver.xml:140(para)
-msgid "The <application>Nemiver</application> window contains the following elements:"
-msgstr ""
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:100
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:101
+msgid "ID"
+msgstr "ID"
 
-#: C/nemiver.xml:145(term)
-msgid "Menubar"
-msgstr "Barra de menuts"
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:149
+#: ../src/persp/dbgperspective/nmv-file-list.cc:108
+msgid "File Name"
+msgstr "Nom de fichièr"
 
-#: C/nemiver.xml:147(para)
-msgid "The menus on the menubar contain all of the commands you need to use <application>Nemiver</application>."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:150
+msgid "Line"
+msgstr "Linha"
 
-#: C/nemiver.xml:153(term)
-msgid "Toolbar"
-msgstr "Barra d'espleches"
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:151
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:607
+msgid "Function"
+msgstr "Foncion"
 
-#: C/nemiver.xml:155(para)
-msgid "The toolbar contains the basic debugging actions that can be used to run or step through the program being debugged."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:152
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:610
+msgid "Address"
+msgstr "Adreça"
 
-#: C/nemiver.xml:161(term)
-msgid "Source View Notebook"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:153
+msgid "Condition"
+msgstr "Condicion"
 
-#: C/nemiver.xml:163(para)
-msgid "When source files are open, this area will display source files of the program being debugged."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:155
+msgid "Toggle countpoint"
+msgstr "Bascular lo punt de comptatge"
 
-#: C/nemiver.xml:169(term)
-msgid "Status Notebook"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:157
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:70
+msgid "Type"
+msgstr "Tipe"
 
-#: C/nemiver.xml:171(para)
-msgid "The Status notebook contains several tabs for displaying information about the program being debugged. These include the following:"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:158
+msgid "Hits"
+msgstr "Ocuréncias"
 
-#: C/nemiver.xml:178(term)
-msgid "Call Stack"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:159
+msgid "Expression"
+msgstr "Expression"
 
-#: C/nemiver.xml:182(para)
-msgid "Displays the current state of the call stack of the program being debugged."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:162
+msgid "Ignore count"
+msgstr "Ignorats"
 
-#: C/nemiver.xml:189(term)
-msgid "Variables"
-msgstr "Variables"
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:364
+msgid "breakpoint"
+msgstr "punt d'arrèst"
 
-#: C/nemiver.xml:193(para)
-msgid "Displays a list of all local variables and function arguments, in addition to their values and types."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:368
+msgid "watchpoint"
+msgstr "punt d'observacion"
 
-#: C/nemiver.xml:200(term)
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:371
+msgid "countpoint"
+msgstr "punt de comptatge"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:374
+msgid "unknown"
+msgstr "desconegut"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:441
+msgid "_Delete"
+msgstr "_Suprimir"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:442
+msgid "Remove this breakpoint"
+msgstr "Suprimís aqueste punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:451
+msgid "_Go to Source"
+msgstr "A_nar dins la font"
+
+#: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
+msgid "Find this breakpoint in the source editor"
+msgstr "Trobar aqueste punt d'arrèst dins l'editor de fichièr font"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:177
+#: ../src/uicommon/nmv-terminal.cc:184
+msgid "_Copy"
+msgstr "_Copiar"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:178
+msgid "Copy the call stack to the clipboard"
+msgstr "Còpia la pila d'apèls cap al quichapapièrs"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:606
+msgid "Frame"
+msgstr "Quadre"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:608
+msgid "Arguments"
+msgstr "Arguments"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:609
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:112
+msgid "Location"
+msgstr "Emplaçament"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:611
+msgid "Binary"
+msgstr "Binari"
+
+#: ../src/persp/dbgperspective/nmv-call-stack.cc:767
+#, c-format
+msgid "(Click here to see the next %d row of the call stack)"
+msgid_plural "(Click here to see the next %d rows of the call stack)"
+msgstr[0] "(Clicatz aicí per veire la linha venenta de la pila d'apèls)"
+msgstr[1] "(Clicatz aicí per veire las %d linhas venentas de la pila d'apèls)"
+
+#: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
+msgid "Function Name"
+msgstr "Nom de la foncion"
+
+#. labels for widget tabs in the status notebook
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:118
+msgid "Context"
+msgstr "Contèxte"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Target Terminal"
-msgstr ""
+msgstr "Terminal de la cibla"
 
-#: C/nemiver.xml:204(para)
-msgid "If the program being debugged prints any output to the terminal, that output will be displayed in this tab."
-msgstr ""
-
-#: C/nemiver.xml:211(term)
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Breakpoints"
+msgstr "Punts d'arrèsts"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:121
+msgid "Registers"
+msgstr "Registres"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:122
+msgid "Memory"
+msgstr "Memòria"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:123
+msgid "Expression Monitor"
+msgstr "Contraròtle de l'expression"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1715
+msgid "Reached end of file"
+msgstr "Fin del fichièr atencha"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
+#, c-format
+msgid "Could not find string %s"
+msgstr "Impossible de trobar la cadena %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
+msgid "Change to Standard Breakpoint"
+msgstr "Modificar en punt d'arrèst estandard"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
+msgid "Change to Countpoint"
+msgstr "Modificar en punt de comptatge"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
+msgid "Remove _Breakpoint"
+msgstr "Suprimir aqueste p_unt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
+msgid "Disable Breakpoint"
+msgstr "Desactivar aqueste punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
+msgid "Enable Breakpoint"
+msgstr "Activar aqueste punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
+msgid "Set _Breakpoint"
+msgstr "De_finir un punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
+msgid "Set Countpoint"
+msgstr "Definir un punt de comptatge"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
+#, c-format
+msgid "%s (path=\"%s\", pid=%i)"
+msgstr "%s (camin=« %s », pid=%i)"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
+msgid "Connected to remote target!"
+msgstr "Connectat a la cibla distanta !"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
+msgid "Program exited"
+msgstr "Lo programa s'es acabat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2528
+msgid "The underlying debugger engine process died."
+msgstr "Lo processus del motor de desbugatge sosjacent s'es arrestat."
+
+#. translators: first %s is the signal name, second one is the reason
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
+#, c-format
+msgid "Target received a signal: %s, %s"
+msgstr "Lo processus cibla a recebut  un senhal : %s, %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
+#, c-format
+msgid "An error occurred: %s"
+msgstr "Una error s'es producha : %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2812
+#, c-format
+msgid "File %s has been modified. Do you want to reload it?"
+msgstr "Lo fichièr %s es estat modificat. Lo volètz recargar ?"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
+msgid "_Detach From the Running Program"
+msgstr "Se _desconnectar del processus en cors"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
+msgid "Disconnect the debugger from the running target without killing it"
+msgstr "Desconnècta lo desbugador del processus cibla en cors sens lo tuar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
+msgid "_Save Session to Disk"
+msgstr "_Enregistrar la session sul disc"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
+msgid "Save the current debugging session to disk"
+msgstr "Enregistra la session de desbugatge actuala sul disc"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
+msgid "_Run or Restart"
+msgstr "E_xecutar o reaviar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
+msgid "Run or Restart the target"
+msgstr "Executar o reaviar la cibla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
+msgid "Set Breakpoint with Dialog..."
+msgstr "Definir un punt d'arrèst amb la bóstia de dialòg..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
+msgid "Set a breakpoint at the current line using a dialog"
 msgstr ""
+"Definís un punt d'arrèst a la linha actuala en utilizant una bóstia de dialòg"
 
-#: C/nemiver.xml:215(para)
-msgid "This tab displays a list of all breakpoints that have been set. You can view the source code of a particular breakpoint by double-clicking an item in the list or by right-clicking and selecting <menuchoice><guimenuitem>Go to Source</guimenuitem></menuchoice> from the menu. In addition, breakpoints can be deleted, enabled, or disabled in this tab."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
+msgid "Set Breakpoint..."
+msgstr "Definir un punt d'arrèst..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3224
+msgid "Set a breakpoint at a function or line number"
+msgstr "Apond un punt d'arrèst a una foncion o un numèro de linha"
+
+#. Depending on the context we will want this string to be
+#. either "Set Breakpoint", or "Remove Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
+msgid "Toggle _Breakpoint"
+msgstr "_Bascular lo punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
+msgid "Set/Unset a breakpoint at the current cursor location"
+msgstr "Apond o lèva un punt d'arrèst a la linha actuala"
+
+#. Depending on the context we will want this string to be
+#. either "Enable Breakpoint", or "Disable
+#. Breakpoint". Hence this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3258
+msgid "Enable/Disable Breakpoint"
+msgstr "Activar/desactivar lo punt d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
+msgid ""
+"Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
+"Activa o desactiva lo punt d'arrèst a la linha ont se tròba actualament lo "
+"cursor"
 
-#: C/nemiver.xml:234(title)
-msgid "Getting Started"
-msgstr "Per començar"
+#. Depending on the context we will want this string to be
+#. either "Set Countpoint", or "Change to Countpoint", or
+#. "Change to Standard Breakpoint". Hence
+#. this string is updated by
+#. DBGPerspective::update_toggle_menu_text when needed. So
+#. this initial value is going to be displayed only when
+#. Nemiver is launched with no executable on the command
+#. line.
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
+msgid "Toggle _Countpoint"
+msgstr "Bascular lo punt de _comptatge"
 
-#: C/nemiver.xml:235(para)
-msgid "This section explains how to start Nemiver and gives a basic overview of the application."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
+msgid "Set/Unset a countpoint at the current cursor location"
+msgstr "Apond o lèva un punt de comptatge a la linha actuala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
+msgid "Set Watchpoint with Dialog..."
+msgstr "Definir un punt d'observacion amb la bóstia de dialòg..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3291
+msgid "Set a watchpoint using a dialog"
+msgstr "Definís un punt d'observacion en utilizant una bóstia de dialòg"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
+msgid "_Next"
+msgstr "_Instruccion seguenta"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
+msgid "Execute next line stepping over the next function, if any"
 msgstr ""
+"Executa la linha seguenta, sens entrar dins l'eventuala foncion que seguís"
 
-#: C/nemiver.xml:240(title)
-msgid "Starting Nemiver"
-msgstr "Aviar Nemiver"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3316
+msgid "_Step"
+msgstr "_Entrar dins la foncion"
 
-#: C/nemiver.xml:241(para)
-msgid "You can start Nemiver in the following ways:"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
+msgid "Execute next line, stepping into the next function, if any"
 msgstr ""
+"Executa la linha seguenta, en entrant dins l'eventuala foncion que seguís"
 
-#: C/nemiver.xml:246(term)
-msgid "<guimenu>Applications</guimenu> menu"
-msgstr "Menut <guimenu>Applications</guimenu>"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3326
+msgid "Step _Out"
+msgstr "_Sortir de la foncion"
 
-#: C/nemiver.xml:248(para)
-msgid "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
+msgid "Finish the execution of the current function"
+msgstr "Acaba l'execucion de la foncion actuala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3336
+msgid "Step Into asm"
+msgstr "Entrar dins l'assemblador"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
+msgid "Step into the next assembly instruction"
+msgstr "Entra dins l'instruccion assemblador seguenta"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3346
+msgid "Step Over asm"
+msgstr "Sortir de l'assemblador"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3347
+msgid "Step over the next assembly instruction"
+msgstr "Sauta l'instruccion assemblador venenta"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
+msgid "_Continue"
+msgstr "_Contunhar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
+msgid "Contunha program execution until the next breakpoint"
+msgstr "Contunha l'execucion del programa fins al punt d'arrèst seguent"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
+msgid "Run to Cursor"
+msgstr "Executar fins al cursor"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
+msgid "Contunha program execution until the currently selected line is reached"
 msgstr ""
+"Contunha l'execucion del programa fins a la linha actualament seleccionada"
 
-#: C/nemiver.xml:255(term)
-msgid "Command line"
-msgstr "Linha de comanda"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
+msgid "Jump to Cursor"
+msgstr "Sautar fins al cursor"
 
-#: C/nemiver.xml:257(para)
-msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
+msgid "Jump to the currently selected line"
+msgstr "Sauta fins a la linha actualament seleccionada"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
+msgid "Jump and Stop to Cursor"
+msgstr "Sautar e s'arrestar al cursor"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
+msgid "Sets a breakpoint to the currently selected line and jump there"
+msgstr "Definís un punt d'arrèst a la linha actualament seleccionada e i va"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
+msgid "Jump to a Given Location"
+msgstr "Sautar fins a un emplaçament donat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3402
+msgid "Select a given code location and jump there"
+msgstr "Seleccionne un emplaçament donat de programa e i va"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
+msgid "Inspect an Expression"
+msgstr "Examina una expression"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
+msgid "Inspect a global or local expression"
+msgstr "Examina una expression globala o locala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
+msgid "Call a Function"
+msgstr "Apelar una foncion"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
+msgid "Call a function in the program being debugged"
+msgstr "Appelle una foncion dins lo programa en cors de desbugatge"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
+msgid "Show Global Variables"
+msgstr "Afichar las variablas globalas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
+msgid "Display all global variables"
+msgstr "Aficha totas las variablas globalas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
+msgid "Refresh Locals"
+msgstr "Actualizar las variablas localas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
+msgid "Refresh the list of variables local to the current function"
+msgstr "Actualise la lista des variablas localas per la foncion actuala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3455
+msgid "Show Assembly"
+msgstr "Afichar l'assemblatge"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
+msgid ""
+"Show the assembly code of the source code being currently debugged, in "
+"another tab"
 msgstr ""
+"Aficha lo còde assemblador del còde font en cors de desbugatge dins un autre "
+"onglet"
 
-#: C/nemiver.xml:262(title)
-msgid "Additional Command-line Options"
-msgstr "Opcions de linha de comanda suplementàrias"
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
+msgid "Switch to Assembly"
+msgstr "Bascular cap a l'assemblatge"
 
-#: C/nemiver.xml:263(para)
-msgid "You can find a list of options that can be passed to Nemiver on the command line by typing <command>nemiver --help-all</command>."
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
+msgid "Show the assembly code of the source code being currently debugged"
+msgstr "Aficha lo code assemblador del còde font en cors de desbugatge"
 
-#: C/nemiver.xml:273(title)
-msgid "Debugging an Executable"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
+msgid "Switch to Source"
+msgstr "Bascular cap a la font"
 
-#: C/nemiver.xml:276(title)
-#: C/nemiver.xml:346(title)
-#: C/nemiver.xml:394(title)
-#: C/nemiver.xml:690(title)
-msgid "Using the Workbench"
-msgstr ""
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3482
+msgid "Show the source code being currently debugged"
+msgstr "Aficha lo còde font en cors de desbugatge"
 
-#: C/nemiver.xml:277(para)
-msgid "To select an executable program to debug, select <menuchoice><guimenu> File </guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should display the following dialog:"
-msgstr ""
-
-#: C/nemiver.xml:289(title)
-msgid "Execute Dialog"
-msgstr ""
-
-#: C/nemiver.xml:295(phrase)
-msgid "Shows dialog for selecting an executable to run"
-msgstr ""
-
-#: C/nemiver.xml:300(para)
-msgid "In this dialog, you can select the program to be debugged, any arguments or options to be passed to the executable on the command line, the working directory to run the executable in, and any Environment Variables that should be set when the executable is being debugged."
-msgstr ""
-
-#: C/nemiver.xml:309(title)
-#: C/nemiver.xml:380(title)
-#: C/nemiver.xml:422(title)
-msgid "Using the Command Line"
-msgstr ""
-
-#: C/nemiver.xml:310(para)
-msgid "To start an executable program to debug from the command line, simply specify the name of the executable. You can either give an absolute path to the executable, or if it is in the path, you can simply give the basename of the executable. For example, if <filename>/usr/bin</filename> is in your path, both of the following are valid:"
-msgstr ""
-
-#: C/nemiver.xml:321(command)
-msgid "nemiver /usr/bin/progname"
-msgstr ""
-
-#: C/nemiver.xml:326(command)
-msgid "nemiver progname"
-msgstr ""
-
-#: C/nemiver.xml:331(title)
-msgid "Passing Options on the Command Line"
-msgstr ""
-
-#: C/nemiver.xml:332(para)
-msgid "If you would like to pass command line options to the program that you are debugging, you should enclose them in quotes to prevent Nemiver from processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
-msgstr ""
-
-#: C/nemiver.xml:344(title)
-msgid "Attaching to a Running Program"
-msgstr ""
-
-#: C/nemiver.xml:347(para)
-msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Attach to Running Program... </guimenuitem></menuchoice>, which should display the following dialog:"
-msgstr ""
-
-#: C/nemiver.xml:359(title)
-msgid "Attach Dialog"
-msgstr ""
-
-#: C/nemiver.xml:365(phrase)
-msgid "Shows dialog for attaching to a running program"
-msgstr ""
-
-#: C/nemiver.xml:370(para)
-msgid "Select a process from the list and click <guibutton>OK</guibutton> to start debugging the selected program. There may be a lot of processes listed in the dialog, so you can filter the list to only ones that that you are interested in by typing some text into the text entry located just below the list."
-msgstr ""
-
-#: C/nemiver.xml:381(para)
-msgid "To attach to a running program from the command line, use the <option>--attach</option> option. The <option>--attach</option> option accepts either a pid or a process name. So, for example, to debug the running process <command>foo</command> which has a pid of 1121, you could either type <command>nemiver --attach foo</command> or <command>nemiver --attach 1121</command>."
-msgstr ""
-
-#: C/nemiver.xml:392(title)
-msgid "Loading a Core File"
-msgstr ""
-
-#: C/nemiver.xml:395(para)
-msgid "Select the menu item <menuchoice><guimenu> File </guimenu><guimenuitem> Load Core File... </guimenuitem></menuchoice> to bring up the following dialog, which will let you load a core file:"
-msgstr ""
-
-#: C/nemiver.xml:408(title)
-msgid "Load Core File Dialog"
-msgstr ""
-
-#: C/nemiver.xml:414(phrase)
-msgid "Shows dialog for loading a core file"
-msgstr ""
-
-#: C/nemiver.xml:423(para)
-msgid "Core files cannot be loaded from the command line."
-msgstr ""
-
-#: C/nemiver.xml:431(title)
-msgid "Using Nemiver"
-msgstr "Utilizar Nemiver"
-
-#: C/nemiver.xml:433(title)
-msgid "Basic Debugging Actions"
-msgstr ""
-
-#: C/nemiver.xml:434(para)
-msgid "The basic debugging actions are available on the main toolbar, in the <menu>Debug</menu> menu, and as keyboard shortcuts. The most common actions are listed below:"
-msgstr ""
-
-#: C/nemiver.xml:440(term)
-msgid "Continue"
-msgstr "Contunhar"
-
-#: C/nemiver.xml:442(para)
-msgid "Starts the program. The program will run until it hits a breakpoint or until the program ends, unless it is interrupted manually by the user by clicking <action>Stop</action>. This action can be activated from the keyboard with <keycap>F5</keycap>."
-msgstr ""
-
-#: C/nemiver.xml:451(term)
-msgid "Next"
-msgstr "Seguent"
-
-#: C/nemiver.xml:453(para)
-msgid "Executes the next statement, and stops when it reaches the next line in this file. Some debuggers may call this action \"Step Over\". This action can be activated from the keyboard with <keycap>F6</keycap>."
-msgstr ""
-
-#: C/nemiver.xml:461(term)
-msgid "Step"
-msgstr "Pas"
-
-#: C/nemiver.xml:463(para)
-msgid "Executes the next statement, stepping into the function if possible. Some debuggers may call this action \"Step In\". This action can be activated from the keyboard with <keycap>F7</keycap>."
-msgstr ""
-
-#: C/nemiver.xml:470(term)
-msgid "Step Out"
-msgstr "Sortir"
-
-#: C/nemiver.xml:472(para)
-msgid "Finishes execution of the current function and stops when it returns to the calling function. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
-msgstr ""
-
-#: C/nemiver.xml:483(term)
-msgid "Restart"
-msgstr "Tornar lançar"
-
-#: C/nemiver.xml:485(para)
-msgid "Reloads the current executable and starts execution from the beginning. This action can be activated from the keyboard with <keycombo><keycap>Shift</keycap><keycap>F5</keycap></keycombo>."
-msgstr ""
-
-#: C/nemiver.xml:495(term)
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
 msgid "Stop"
 msgstr "Arrestar"
 
-#: C/nemiver.xml:497(para)
-msgid "Manually interrupt execution of the program. This action is only available when the debugger is running the executable (e.g. after a user has clicked <action>Continue</action>). This action can be activated from the keyboard with <keycap>F9</keycap>."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
+msgid "Stop the debugger"
+msgstr "Arrèsta lo desbugador"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
+msgid "_View"
+msgstr "_Afichatge"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
+msgid "Switch to Target Terminal View"
+msgstr "Bascula cap a la vista del terminal de la cibla"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
+msgid "Switch to Context View"
+msgstr "Bascula cap a la vista del contèxte"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3540
+msgid "Switch to Breakpoints View"
+msgstr "Bascula cap a la vista dels punts d'arrèst"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3551
+msgid "Switch to Registers View"
+msgstr "Bascula cap a la vista dels registres"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3563
+msgid "Switch to Memory View"
+msgstr "Bascula cap a la vista de la memòria"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3574
+msgid "Switch to Variables Monitor View"
+msgstr "Bascula cap a la vista de contraròtle de las variablas"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3583
+msgid "_Debug"
+msgstr "Des_bugar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3593
+msgid "_Open Source File..."
+msgstr "_Dobrir un fichièr font..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3594
+msgid "Open a source file for viewing"
+msgstr "Dobrís un fichièr font per fin de lo consultar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
+msgid "Load _Executable..."
+msgstr "C_argar un fichièr executable..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
+msgid "Execute a program"
+msgstr "Executa un programa"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3614
+msgid "_Load Core File..."
+msgstr "C_argar un fichièr core..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
+msgid "Load a core file from disk"
+msgstr "Carga un fichièr core dempuèi lo disc"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
+msgid "_Attach to Running Program..."
+msgstr "Se connectar a un process_us en cors..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3626
+msgid "Debug a program that's already running"
+msgstr "Desbòga un programa ja aviat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
+msgid "_Connect to Remote Target..."
+msgstr "Se _connectar a una cibla distanta..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
+msgid "Connect to a debugging server to debug a remote target"
+msgstr "Se connècta a un servidor de desbugatge per desbugar una cibla distanta"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
+msgid "Resume Sa_ved Session..."
+msgstr "Reprene una _session enregistrada..."
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
+msgid "Open a previously saved debugging session"
+msgstr "Dobrís una session de desbugatge enregistrada"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
+msgid "_Preferences"
+msgstr "_Preferéncias"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
+msgid "Edit the properties of the current session"
+msgstr "Modifica las proprietats de la session actuala"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
+msgid "_Copy selected text"
+msgstr "_Copiar lo tèxte seleccionat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
+msgid "Copy the text selected in the current source file"
+msgstr "Copiar lo tèxte seleccionat dins lo fichièr font actual"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
+msgid "_Reload Source File"
+msgstr "_Recargar lo fichièr font"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
+msgid "Reloads the source file"
+msgstr "Recarga lo fichièr font"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
+msgid "_Close Source File"
+msgstr "_Tampar lo fichièr font"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
+msgid "Close the opened file"
+msgstr "Tampa lo fichièr dobèrt"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
+msgid "_Find"
+msgstr "_Recercar"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
+msgid "Find a text string in file"
+msgstr "Recèrca una cadena de tèxte dins un fichièr"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
+#, c-format
+msgid "Close %s"
+msgstr "Tampar %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
+msgid "Sorry, it's impossible to restart a remote inferior"
+msgstr "O planhèm, impossible de reaviar un inferior distant"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
+#, c-format
+msgid "Could not find file %s"
+msgstr "Impossible de trobar lo fichièr « %s »"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
+#, c-format
+msgid "Could not load program: %s"
+msgstr "Impossible de cargar lo programa : %s"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
+msgid "You cannot attach to Nemiver itself"
+msgstr "Podètz pas connectar Nemiver a el meteis"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
+msgid "You cannot attach to the underlying debugger engine"
+msgstr "Vos podètz pas connectar al motor de desbugatge sosjacent"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
+msgid "Failed to stop the debugger"
+msgstr "L'arrèst del desbugador a fracassat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
+#, c-format
+msgid "Invalid line number: %i"
+msgstr "Numèro de linha non valide : %i"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
+#, c-format
+msgid ""
+"There is a program being currently debugged. Do you really want to exit from "
+"the debugger?"
 msgstr ""
+"Un programa es actualament en cors de desbugatge. Volètz vertadièrament "
+"quitar lo desbugador ?"
 
-#: C/nemiver.xml:506(para)
-msgid "By default, after loading an executable, Nemiver creates a breakpoint at <function>main()</function>, so when execution reaches <function>main()</function>, it will stop and wait for input. You can then step through the program and examine variables (see <xref linkend=\"nemiver-sect-inspecting-variables\"/>), or set breakpoints (see <xref linkend=\"nemiver-sect-breakpoints\"/>)."
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
+msgid "Default Layout"
+msgstr "Agençament per defaut"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
+msgid "Nemiver's default layout"
+msgstr "Agençament per defaut de Nemiver"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
+msgid "Source Code"
+msgstr "Còde font"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
+msgid "Dynamic Layout"
+msgstr "Agençament dinamic"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
+msgid "A layout which can be modified"
+msgstr "Un agençament qui pòt èsser modificat"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
+msgid "Two Status Pane"
+msgstr "Panèl a dos estats"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
+msgid "A layout with two status pane"
+msgstr "Un agençament amb volet a dos estats"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
+msgid "Wide Layout"
+msgstr "Agençament espandit"
+
+#: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
+msgid "A layout for very large monitors"
+msgstr "Un agençament per les très grands ecrans"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:128
+msgid "Expand _Selected"
+msgstr "Alargar la _seleccion"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:134
+msgid "Expand _All"
+msgstr "Alargar _tot"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:144
+msgid "_Collapse"
+msgstr "_Reduire"
+
+#: ../src/persp/dbgperspective/nmv-file-list.cc:427
+msgid "Loading files from target executable..."
+msgstr "Cargament des fichièrs dempuèi l'executable cible..."
+
+#: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:233
+#, c-format
+msgid ""
+"Variable type is: \n"
+" %s"
 msgstr ""
+"Lo tipe de la variabla es : \n"
+" %s"
 
-#: C/nemiver.xml:516(title)
-msgid "Inspecting variables"
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
+msgid "Local Variables"
+msgstr "Variablas localas"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
+msgid "Function Arguments"
+msgstr "Paramètres de la foncion"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
+msgid "_Copy Variable Name"
+msgstr "_Copiar lo nom de la variabla"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
+msgid "Copy the variable path expression to the clipboard"
+msgstr "Còpia dins lo quichapapièrs l'expression del camin de la variabla"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
+msgid "_Copy Variable Value"
+msgstr "_Copiar la valor de la variabla"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
+#: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
+msgid "Copy the variable value to the clipboard"
+msgstr "Còpia la valor de la variabla dins lo quichapapièrs"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
+msgid "Create Watchpoint"
+msgstr "Crear un punt d'observacion"
+
+#: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
+msgid ""
+"Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
+"Crèa un punt d'observacion qui se déclenche al moment del cambiament de la "
+"valor de l'expression"
 
-#: C/nemiver.xml:517(para)
-msgid "Nemiver displays a list of all local variables in the <interface>Variables</interface> tab of the <interface>Status Notebook</interface>. If you'd like to examine a different variable (or even an arbitrary expression), you can use the <interface>Variable Inspector</interface>. To bring up the <interface>Variable Inspector</interface>, select <menuchoice><guimenu>Debug</guimenu><guimenuitem>Inspect a Variable</guimenuitem></menuchoice>. When the variable inspector comes up, you'll see a window that looks similar to the following:"
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:49
+msgid "Byte"
+msgstr "Octet"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:52
+msgid "Word"
+msgstr "Mot"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:55
+msgid "Long Word"
+msgstr "Mot long"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:98
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
+msgid "Address:"
+msgstr "Adreça :"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:100
+msgid "Show"
+msgstr "Afichar"
+
+#: ../src/persp/dbgperspective/nmv-memory-view.cc:103
+msgid "Group By:"
+msgstr "Regropar per :"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
+msgid "Choose a Directory"
+msgstr "Causir un repertòri"
+
+#: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
+msgid "Source Directories"
+msgstr "Repertòris fonts"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
+msgid "User Name"
+msgstr "Nom d'utilizaire"
+
+#: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
+msgid "Proc Args"
+msgstr "Arguments del processus"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:101
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
+msgid "Name"
+msgstr "Nom"
+
+#: ../src/persp/dbgperspective/nmv-registers-view.cc:102
+#: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
+msgid "Value"
+msgstr "Valor"
+
+#: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
+msgid "Session"
+msgstr "Session"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
+msgid "Throw Exception"
+msgstr "Desenclavar una excepcion"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
+msgid "Catch Exception"
+msgstr "Capturar una excepcion"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
+msgid "Fork System Call"
+msgstr "Apèl sistèma fork"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
+msgid "Vfork System Call"
+msgstr "Apèl sistèma vfork"
+
+#: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
+msgid "Exec System Call"
+msgstr "Apèl sistèma exec"
+
+#: ../src/persp/dbgperspective/nmv-thread-list.cc:184
+msgid "Thread ID"
+msgstr "ID thread"
+
+#. create the columns of the tree view
+#: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
+msgid "Variable"
+msgstr "Variabla"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
+msgid "In scope expressions"
+msgstr "Expressions concernidas"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
+msgid "Out of scope expressions"
+msgstr "Expressions pas concernidas"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
+msgid "Remove"
+msgstr "Suprimir"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
+msgid "Remove selected expressions from the monitor"
+msgstr "Suprimís del contraròtle las expressions seleccionadas"
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
+msgid "New..."
+msgstr "Novèla..."
+
+#: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
+msgid "Add a new expression to the monitor"
+msgstr "Apond una novèla expression al contraròtle"
+
+#: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
+msgid "Call a function:"
+msgstr "Apelar una foncion :"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
+msgid "Set Breakpoint"
+msgstr "Definir un punt d'arrèst"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
+msgid "Choose Overloaded Function"
+msgstr "Causissètz una foncion surcargada"
+
+#: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
+msgid ""
+"Multiple functions match the specified name. Please choose one from the list "
+"below."
 msgstr ""
+"Mantuna foncion que correspondon al nom indicat. Causissètz-ne una dins la "
+"lista çaijós."
 
-#: C/nemiver.xml:532(phrase)
-msgid "Variable Inspector Dialog"
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
+msgid "Find Text"
+msgstr "Recèrca d'un tèxte"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
+msgid "_Search:"
+msgstr "Rec_ercar :"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
+msgid "Match Options:"
+msgstr "Opcions de la recèrca :"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
+msgid "Match c_ase"
+msgstr "Respectar la c_assa"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
+msgid "Match _entire word only"
+msgstr "_Mots entièrs unicament"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
+msgid "Cycling Options:"
+msgstr "Opcions de direccion :"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
+msgid "_Wrap around"
+msgstr "Recèrca _circulara"
+
+#: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
+msgid "Search _backwards"
+msgstr "Recercar en _arrièr"
+
+#: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
+msgid "Global Variables"
+msgstr "Variablas globalas"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
+msgid "Choose a Core File to Debug"
+msgstr "Seleccion d'un fichièr core d'examinar"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
+msgid "Select a Core File"
+msgstr "Seleccion d'un fichièr core"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
+msgid "Core File:"
+msgstr "Fichièr core :"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
+msgid "Select the executable that created the core file"
+msgstr "Seleccion de l'executable qu'a generat lo fichièr core"
+
+#: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
+msgid "Executable:"
+msgstr "Executable :"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
+msgid "Open Source Files"
+msgstr "Dobertura de fichièrs font"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
+msgid "Select from _Target Executable"
+msgstr "Seleccionatz dempuèi l'executable _cibla"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
+msgid "Select from _File System"
+msgstr "Seleccionatz dempuèi lo _sistèma de fichièrs"
+
+#: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
+msgid "Choose Source Files to Open"
+msgstr "Seleccion dels fichièrs font de dobrir"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
+msgid "Preferences"
+msgstr "Preferéncias"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
+msgid "Use system monospace font"
+msgstr "Utilizar la poliça sistèma de chassa fixa"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
+msgid "Custom Font:"
+msgstr "Poliça personalizada :"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
+msgid "Editor Font"
+msgstr "Poliça de l'editor"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
+msgid "Visual Style"
+msgstr "Estil visual"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
+msgid "Display line numbers"
+msgstr "Afichar los numèros de linhas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
+msgid "Line Numbers"
+msgstr "Numèros de linha"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
+msgid "Use launch terminal"
+msgstr "Utilizar lo terminal d'aviada"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
+msgid "Terminal"
+msgstr "Terminal"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
+msgid "When a source file is changed:"
+msgstr "Quand un fichièr font es estat modificat :"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
+msgid "Reload the file"
+msgstr "Recargar lo fichièr"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
+msgid "Do not reload the file"
+msgstr "Recargar pas lo fichièr"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
+msgid "Ask each time"
+msgstr "Demandar a cada còp"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
+msgid "File Monitoring"
+msgstr "Susvelhança dels fichièrs"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
+msgid "Enable syntax highlighting"
+msgstr "Activar la coloracion sintaxica"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
+msgid "Syntax Highlighting"
+msgstr "Coloracion sintaxica"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
+msgid "Editor"
+msgstr "Editor"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
+msgid "Update at each stop"
+msgstr "Metre a jorn a cada arrèst"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
+msgid "Local variables"
+msgstr "Variablas localas"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
+msgid "Pure assembly"
+msgstr "Assemblatge pur"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
+msgid "Mixed source and assembly"
+msgstr "Font e assemblatge mesclats"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
+msgid "Assembly style"
+msgstr "Estil de l'assemblatge"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
+msgid "Assembly flavor"
+msgstr "Genre de l'assemblatge"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
+msgid "Choose a File"
+msgstr "Seleccion d'un fichièr"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
+msgid "Path to the GDB binary used"
+msgstr "Camin cap al binari GDB utilizat"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
+msgid "GDB Binary"
+msgstr "Binari GDB"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
+msgid "Number of instructions to disassemble by default"
+msgstr "Nombre d'instruccions de desassemblar per defaut"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
+msgid "Instructions"
+msgstr "Instruccions"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
+msgid "Enable pretty printing (requires debugger restart)"
+msgstr "Activar l'afichatge formatat (lo desbugador deu èsser reaviat)"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
+msgid "GDB Pretty Printing"
+msgstr "Afichatge formatat GDB"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
+msgid "Follow parent"
+msgstr "Seguir lo parent"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
+msgid "Follow child"
+msgstr "Seguir l'enfant"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
+msgid "GDB Follow Fork Mode"
+msgstr "GDB seguís lo mòde fork"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
+msgid "Debugger"
+msgstr "Desbugador"
+
+#: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
+msgid "Layout"
+msgstr "Agençament"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
+msgid "Attach to a Running Program"
+msgstr "Connexion a un processus en cors"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
+msgid "Choose a Process to Debug"
+msgstr "Causissètz un processus de desbugar"
+
+#: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
+msgid "_Filter list:"
+msgstr "Lista de _filtres :"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
+msgid "Connect to Remote Target"
+msgstr "Connexion a una cibla distanta"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
+msgid "Executable to Load"
+msgstr "Fichièr executable de cargar"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
+msgid "Shared Libraries Location"
+msgstr "Emplaçament de las bibliotècas partejadas"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
+msgid "Remote Debugging Server"
+msgstr "Servidor distant de desbugatge"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
+msgid "TCP/IP Connection"
+msgstr "Connexion TCP/IP"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
+msgid "Port:"
+msgstr "Pòrt :"
+
+#: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
+msgid "Serial Line Connection"
+msgstr "Connexion linha seria"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
+msgid "Choose a Program to Execute"
+msgstr "Seleccion d'un programa a executar"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
+msgid "Choose an Executable"
+msgstr "Seleccion d'un executable"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
+msgid "Program:"
+msgstr "Programa :"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
+msgid "Arguments:"
+msgstr "Arguments :"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
+msgid "Choose a Working Directory"
+msgstr "Seleccion d'un repertòri de trabalh"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
+msgid "Working Directory:"
+msgstr "Repertòri de trabalh :"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
+msgid "_Add"
+msgstr "_Apondre"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
+msgid "_Remove"
+msgstr "_Suprimir"
+
+#: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
+msgid "Environment Variables:"
+msgstr "Variablas d'environament :"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
+msgid "Saved Sessions"
+msgstr "Sessions enregistradas"
+
+#: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
+msgid "Choose a Session to Debug"
+msgstr "Causissètz una session de desbugatge"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
+msgid "Set a Breakpoint:"
+msgstr "Definir un punt d'arrèst :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
+msgid "Condition:"
+msgstr "Condicion :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
+msgid "_Event:"
+msgstr "E_veniment :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
+msgid "_Binary Location:"
+msgstr "Emplaçament del _binari :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
+msgid "_Source Location:"
+msgstr "Emplaçament de la _font :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
+msgid "F_unction Name:"
+msgstr "Nom de la f_oncion :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
+msgid "File name:"
+msgstr "Nom del fichièr :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
+msgid "Function:"
+msgstr "Foncion :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
+msgid "Line:"
+msgstr "Linha :"
+
+#: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
+msgid "Set as Countpoint"
+msgstr "Definir coma point de comptatge"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
+msgid "Set Location to Jump To"
+msgstr "Definir l'emplaçament a atteindre"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
+msgid "Jump to location:"
+msgstr "Sautar fins a l'emplaçament :"
+
+#: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
+msgid "Break at Destination"
+msgstr "S'arrestar a destination"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
+msgid "Add to monitor"
+msgstr "Apondre al contraròtle"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
+msgid "_Variable Name:"
+msgstr "Nom de la _variable :"
+
+#: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
+msgid "_Inspect"
+msgstr "_Examinar"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
+msgid "Set a watchpoint:"
+msgstr "Definir un punt d'observacion :"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
+msgid "Expression:"
+msgstr "Expression :"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
+msgid "Inspect"
+msgstr "Examinar"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
+msgid "Triggers on:"
+msgstr "Desenclavat en cas de :"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
+msgid "Read"
+msgstr "Lectura"
+
+#: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
+msgid "Write"
+msgstr "Escritura"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:66
+#, c-format
+msgid "Select Location for %s"
+msgstr "Seleccionatz un emplaçament per %s"
+
+#: ../src/uicommon/nmv-locate-file-dialog.cc:76
+#, c-format
+msgid ""
+"Cannot find file '%s'.\n"
+"Please specify the location of this file:"
 msgstr ""
+"Impossible de trobar lo fichièr « %s ».\n"
+"Indicatz l'emplaçament del fichièr :"
 
-#: C/nemiver.xml:536(para)
-msgid "You can type any variable name or a simple expression (such as <literal>pFoo-&gt;bar</literal>) into the input box, and if the variable is valid and in scope, it will be display details about that expression."
-msgstr ""
+#: ../src/uicommon/nmv-source-editor.cc:646
+#, c-format
+msgid "Line: %i, Column: %i"
+msgstr "Linha : %i, Colomna : %i"
 
-#: C/nemiver.xml:541(para)
-msgid "Alternately, if you select the name of a variable in the <interface>source editor</interface>, and then launch the <interface>Variable Inspector</interface>, it will attempt to display information about the selected variable name."
-msgstr ""
+#: ../src/uicommon/nmv-source-editor.cc:1490
+#, c-format
+msgid "Could not load file %s because its encoding is different from %s"
+msgstr "Impossible de cargar lo fichièr %s car son codage es diferent de %s"
 
-#: C/nemiver.xml:548(title)
-msgid "Keyboard Shortcut"
-msgstr ""
+#: ../src/uicommon/nmv-terminal.cc:185
+msgid "Copy the selection"
+msgstr "Copiar la seleccion"
 
-#: C/nemiver.xml:549(para)
-msgid "You can also start the <interface>Variable Inspector</interface> by pressing <keycap>F12</keycap>."
-msgstr ""
+#: ../src/uicommon/nmv-terminal.cc:191
+msgid "_Paste"
+msgstr "_Pegar"
 
-#: C/nemiver.xml:556(title)
-msgid "Setting Breakpoints"
-msgstr ""
+#: ../src/uicommon/nmv-terminal.cc:192
+msgid "Paste the clipboard"
+msgstr "Pegar lo contengut del quichapapièrs"
 
-#: C/nemiver.xml:557(para)
-msgid "There are several different ways to set breakpoints in Nemiver. Nemiver automatically sets a breakpoint at <function>main()</function> when you first begin debugging a new executable. If you want to set additional breakpoints you can do one of the following:"
-msgstr ""
+#: ../src/uicommon/nmv-terminal.cc:198
+msgid "_Reset"
+msgstr "_Reïnicializar"
 
-#: C/nemiver.xml:565(para)
-msgid "Click in the margin next to the line where you want the breakpoint to be set"
-msgstr ""
+#: ../src/uicommon/nmv-terminal.cc:199
+msgid "Reset the terminal"
+msgstr "Reïnicializar lo terminal"
 
-#: C/nemiver.xml:569(para)
-msgid "Place your cursor on a line where you want the breakpoint to be set and set the breakpoint by either selecting <menuchoice><menu>Debug</menu><menuitem>Toggle Breakpoint at Cursor</menuitem></menuchoice>, or by pressing <keycap>F8</keycap>"
-msgstr ""
+#: ../src/uicommon/nmv-ui-utils.cc:94
+msgid "Do not ask me again"
+msgstr "Ne plus me demandar"
 
-#: C/nemiver.xml:577(para)
-msgid "Set a breakpoint at a specific function name or at a specific location in a file by selecting <menuchoice><menu>Debug</menu><menuitem>Set Breakpoint...</menuitem></menuchoice> or by pressing <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will bring up a dialog that looks like the following:"
-msgstr ""
+#: ../src/workbench/nmv-workbench.cc:263
+msgid "Project Website"
+msgstr "Site Web del projècte"
 
-#: C/nemiver.xml:592(phrase)
-msgid "Set Breakpoint Dialog"
-msgstr ""
-
-#: C/nemiver.xml:596(para)
-msgid "You can specify a breakpoint at a particular location in a file, or by function name. If there are more than one function with the same name, Nemiver will display a list of all matching functions and ask you to pick the one you want."
-msgstr ""
-
-#: C/nemiver.xml:605(title)
-msgid "Disabled Breakpoints"
-msgstr ""
-
-#: C/nemiver.xml:606(para)
-msgid "Breakpoints can be either enabled or disabled. The debugger will stop execution whenever it reaches an enabled breakpoint but will not be affected by any breakpoints in the disabled state. This allows you to temporarily remove a breakpoint without actually deleting it."
-msgstr ""
-
-#: C/nemiver.xml:612(para)
-msgid "To disable or enable a breakpoint, click the checkbox next to the breakpoint number you want to enable or disable in the <interface>Breakpoints</interface> tab of the <interface>Status Notebook</interface>. Alternately, you can press <keycombo><keycap>Shift</keycap><keycap>F8</keycap></keycombo> to enable or disable a breakpoint that is set on the line that the cursor is currently on."
-msgstr ""
-
-#: C/nemiver.xml:625(title)
-msgid "Opening Source Files"
-msgstr ""
-
-#: C/nemiver.xml:626(para)
-msgid "Sometimes you don't know exactly the function name or line number where you want a breakpoint to be set, so you must open a source file to figure it out. You could just open arbitrary files from the filesystem, but Nemiver can also provide a list of source files that were used to build the executable and allow you to select from this list. When you select <menuchoice><menu>File</menu><menuitem>Open Source File...</menuitem></menuchoice>, the following window should be displayed:"
-msgstr ""
-
-#: C/nemiver.xml:643(phrase)
-msgid "Shows dialog for opening source files"
-msgstr ""
-
-#: C/nemiver.xml:647(para)
-msgid "To select an arbitrary file from the filesystem, choose the <guilabel>Select from Filesystem</guilabel> option. To select from a list of files that produced the executable, choose <guilabel>Select from Target Executable</guilabel>."
-msgstr ""
-
-#: C/nemiver.xml:654(title)
-msgid "Determining Source Files for Dynamically Loaded Modules"
-msgstr ""
-
-#: C/nemiver.xml:655(para)
-msgid "If the target executable loads modules at runtime (e.g. using <function>dlopen()</function>), Nemiver will not be able to determine which files were used to build these modules until they are actually loaded."
-msgstr ""
-
-#: C/nemiver.xml:666(title)
-msgid "Debugging Sessions"
-msgstr ""
-
-#: C/nemiver.xml:667(para)
-msgid "Nemiver can save your debugging sessions for you so that you can resume them at a later time. This includes saving information such as which executable is being debugged, what environment variables are set, what command-line options are passed to the executable, which files are open, and which breakpoints are set so that you can get back to where you left off last time as quickly as possible."
-msgstr ""
-
-#: C/nemiver.xml:676(title)
-msgid "Saving Sessions"
-msgstr ""
-
-#: C/nemiver.xml:677(para)
-msgid "Nemiver will save your session automatically on exit, so you don't even have to worry about it. However, if you want to explicitly save the session before closing Nemiver, you can do so by selecting <menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</guimenuitem></menuchoice>."
-msgstr ""
-
-#: C/nemiver.xml:688(title)
-msgid "Resuming Saved Sessions"
-msgstr ""
-
-#: C/nemiver.xml:691(para)
-msgid "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved Session...</guimenuitem></menuchoice> and select a session from the list."
-msgstr ""
-
-#: C/nemiver.xml:700(title)
-msgid "Session Dialog"
-msgstr ""
-
-#: C/nemiver.xml:706(phrase)
-msgid "Shows dialog for resuming a saved session"
-msgstr ""
-
-#: C/nemiver.xml:713(title)
-msgid "From the Command Line"
-msgstr ""
-
-#: C/nemiver.xml:714(para)
-msgid "If you know the session ID of the session you want to run, you can start that debugging session from the command line. For example, if you want to run session number 3, you can do so with the following command: <command>nemiver --executesession 3</command>."
-msgstr ""
-
-#: C/nemiver.xml:727(title)
-msgid "About Nemiver"
-msgstr "A prepaus de Nemiver"
-
-#: C/nemiver.xml:728(para)
-msgid "<application>Nemiver</application> was written by Dodji Seketeli and Jonathon Jongsma, with contributions from many others. To find more information about Nemiver, please visit the <ulink url=\"http://home.gna.org/nemiver/\" type=\"http\">Nemiver project website</ulink>."
-msgstr ""
-
-#: C/nemiver.xml:734(para)
-msgid "To report a bug or make a suggestion regarding this application or this manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
-msgstr ""
-
-#: C/nemiver.xml:741(para)
-msgid "This program is distributed under the terms of the GNU General Public license as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version. A copy of this license can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or in the file COPYING included with the source code of this program."
-msgstr ""
-
-#. Put one translator per line, in the form of NAME <EMAIL>, YEAR1, YEAR2.
-#: C/nemiver.xml:0(None)
+#. Translators: change this to your name, separate multiple names with \n
+#: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
-msgstr "Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>"
+msgstr ""
+"Alain Lojewski <allomervan@gmail.com>"
 
+#: ../src/workbench/nmv-workbench.cc:661
+msgid "_File"
+msgstr "_Fichièr"
+
+#: ../src/workbench/nmv-workbench.cc:672
+msgid "_Quit"
+msgstr "_Quitar"
+
+#: ../src/workbench/nmv-workbench.cc:673
+msgid "Quit the application"
+msgstr "Quita l'aplicacion"
+
+#: ../src/workbench/nmv-workbench.cc:683
+msgid "_Edit"
+msgstr "E_dicion"
+
+#: ../src/workbench/nmv-workbench.cc:694
+msgid "_Help"
+msgstr "A_juda"
+
+#: ../src/workbench/nmv-workbench.cc:705
+msgid "_About"
+msgstr "A p_repaus"
+
+#: ../src/workbench/nmv-workbench.cc:706
+msgid "Display information about this application"
+msgstr "Aficha des informations concernant aquesta aplicacion"
+
+#: ../src/workbench/nmv-workbench.cc:716
+msgid "_Contents"
+msgstr "_Ensenhador"
+
+#: ../src/workbench/nmv-workbench.cc:717
+msgid "Display the user manual for this application"
+msgstr "Aficha lo manual utilizaire de aquesta aplicacion"
+
+#. end extern C
+#: ../ui/locatefiledialog.ui.h:1
+msgid "Select File Location"
+msgstr "Seleccionatz un emplaçament de fichièr"
+
+#: ../ui/locatefiledialog.ui.h:2
+msgid "Locate File"
+msgstr "Localizar un fichièr"
