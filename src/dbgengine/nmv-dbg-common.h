@@ -171,7 +171,7 @@ public:
 
     bool has_slot () const
     {
-        return m_slot;
+        return static_cast<bool> (m_slot);
     }
 
     template<class T>
