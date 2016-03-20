@@ -1,23 +1,25 @@
 # Serbian translation of nemiver.
-# Courtesy of Prevod.org team (http://prevod.org/) -- 2012—2016.
+# Courtesy of Prevod.org team (http://prevod.org/) -- 2012.
 # This file is distributed under the same license as the nemiver package.
-# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012 — 2016.
+# Мирослав Николић <miroslavnikolic@rocketmail.com>, 2012 — 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver"
-"&keywords=I18N+L10N&component=general\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2015-12-09 08:08+0000\n"
-"PO-Revision-Date: 2016-02-19 21:21+0200\n"
-"Last-Translator: Мирослав Николић <miroslavnikolic@rocketmail.com>\n"
+"PO-Revision-Date: 2016-01-17 22:45+0100\n"
+"Last-Translator: Марко М. Костић (Marko M. Kostić) <marko.m.kostic@gmail."
+"com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : "
-"n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=4; plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 : n"
+"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Project-Style: gnome\n"
+"X-Generator: Poedit 1.8.5\n"
 
 #: ../data/nemiver.appdata.xml.in.h:1
 msgid ""
@@ -27,8 +29,8 @@ msgid ""
 msgstr ""
 "Немивер је покушај писања самосталног графичког прочишћавача који се лепо "
 "сједињује са окружењем Гномове радне површи. Тренутно га одликује позадинац "
-"који користи добро познатог Гнуовог прочишћавача гдб-а за прочишћавање Ц / "
-"Ц++ програма."
+"који користи добро познатог Гнуовог прочишћавача гдб-а за прочишћавање Ц / Ц+"
+"+ програма."
 
 #: ../data/nemiver.appdata.xml.in.h:2
 msgid ""
@@ -263,14 +265,12 @@ msgstr "Бинарни"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-#| msgid "(Click here to see the next %d row of the call stack"
-#| msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] "(Притисните овде да видите следећи %d ред позивног стека)"
-msgstr[1] "(Притисните овде да видите следећа %d реда позивног стека)"
-msgstr[2] "(Притисните овде да видите следећих %d редова позивног стека)"
-msgstr[3] "(Притисните овде да видите следећи један ред позивног стека)"
+msgstr[0] "(Кликните овде да видите следећи %d ред позивне хрпе)"
+msgstr[1] "(Кликните овде да видите следећа %d реда позивне хрпе)"
+msgstr[2] "(Кликните овде да видите следећих %d редова позивне хрпе)"
+msgstr[3] "(Кликните овде да видите следећи један ред позивне хрпе)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
