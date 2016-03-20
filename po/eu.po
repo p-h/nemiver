@@ -1,27 +1,35 @@
 # Basque translation for nemiver.
 # Copyright (C) 2015 nemiver's COPYRIGHT HOLDER
 # This file is distributed under the same license as the nemiver package.
-# 
-# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2015.
-# Edurne Labaka <elabaka@uzei.com>, 2015.
 #
+#
+# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2015, 2016.
+# Edurne Labaka <elabaka@uzei.com>, 2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-02-07 17:37+0100\n"
-"PO-Revision-Date: 2015-02-02 16:03+0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-03-20 22:06+0100\n"
+"PO-Revision-Date: 2016-03-20 22:07+0100\n"
+"Last-Translator: dooteo <dooteo@zundan.com>\n"
+"Language-Team: Basque <librezale@librezale.org>\n"
 "Language: eu_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.10\n"
+"X-Generator: Lokalize 2.0\n"
 
-#: ../data/nemiver.appdata.xml.in.h:1
+#: ../data/nemiver.appdata.xml.in.h:1 ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.appdata.xml.in.h:2 ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Araztu aplikazioak"
+
+#: ../data/nemiver.appdata.xml.in.h:3
 msgid ""
 "Nemiver is an on-going effort to write a standalone graphical debugger that "
 "integrates well in the GNOME desktop environment. It currently features a "
@@ -31,17 +39,13 @@ msgstr ""
 "independentea idazteko ahalegina da Nemiver. Une honetan, C / C++ programak "
 "arazteko GNU Debugger gdb ezaguna erabiltzen duen modulua eskaintzen du."
 
-#: ../data/nemiver.appdata.xml.in.h:2
+#: ../data/nemiver.appdata.xml.in.h:4
 msgid ""
 "We believe that Nemiver is mature and robust enough to just let you debug "
 "your favorite C or C++ application in a pleasant way."
 msgstr ""
 "Gure ustez Nemiver ondo eratua dago eta sendoa da zure gogoko C edo C++ "
 "aplikazioak erosotasunez arazteko."
-
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
-msgid "Nemiver"
-msgstr "Nemiver"
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
@@ -50,10 +54,6 @@ msgstr "C/C++ araztailea"
 #: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Nemiver C/C++ araztailea"
-
-#: ../data/nemiver.desktop.in.h:4
-msgid "Debug Applications"
-msgstr "Araztu aplikazioak"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
@@ -263,10 +263,10 @@ msgstr "Bitarra"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-msgid "(Click here to see the next %d row of the call stack"
+msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] "Egin klik hemen dei-pilaren hurrengo %d errenkada ikusteko"
-msgstr[1] "Egin klik hemen dei-pilaren hurrengo %d errenkada ikusteko"
+msgstr[0] "(Egin klik hemen dei-pilaren hurrengo errenkada %d ikusteko)"
+msgstr[1] "(Egin klik hemen dei-pilaren hurrengo %d errenkada ikusteko)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
@@ -1507,3 +1507,4 @@ msgstr "Hautatu fitxategi-kokalekua"
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Locate File"
 msgstr "Zehaztu fitxategiaren kokalekua"
+
