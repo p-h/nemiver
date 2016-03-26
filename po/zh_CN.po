@@ -5,40 +5,49 @@
 # lainme <lainme993@gmail.com>, 2010, 2012.
 # Lele Long <schemacs@gmail.com>, 2011.
 # YunQiang Su <wzssyqa@gmail.com>, 2011.
+# Jeff Bai <jeffbai@aosc.xyz>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-02-14 13:41+0000\n"
-"PO-Revision-Date: 2014-02-20 17:20+0800\n"
-"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
+"POT-Creation-Date: 2016-01-23 18:27+0000\n"
+"PO-Revision-Date: 2015-12-11 12:25-0700\n"
+"Last-Translator: Jeff Bai <jeffbai@aosc.xyz>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.8.6\n"
 
-#: ../data/nemiver.appdata.xml.in.h:1
+#: ../data/nemiver.appdata.xml.in.h:1 ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.appdata.xml.in.h:2 ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "调试应用程序"
+
+#: ../data/nemiver.appdata.xml.in.h:3
 msgid ""
 "Nemiver is an on-going effort to write a standalone graphical debugger that "
 "integrates well in the GNOME desktop environment. It currently features a "
 "backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
-msgstr "Nemiver 是一款正在开发的，与 GNOME 桌面环境良好集成的独立图形化调试工具。"
-"它当前使用为人熟知的 GNU 调试器 gdb 为后端来调试 C / C++ 程序。"
+msgstr ""
+"Nemiver 是一款正在开发的，与 GNOME 桌面环境良好集成的独立图形化调试工具。它当"
+"前使用为人熟知的 GNU 调试器 gdb 为后端来调试 C / C++ 程序。"
 
-#: ../data/nemiver.appdata.xml.in.h:2
+#: ../data/nemiver.appdata.xml.in.h:4
 msgid ""
 "We believe that Nemiver is mature and robust enough to just let you debug "
 "your favorite C or C++ application in a pleasant way."
-msgstr "我们相信，Nemiver 已经足够成熟，您可以用它轻松的调试自己喜欢的 C 或 C++ 应用程序了。"
-
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
-msgid "Nemiver"
-msgstr "Nemiver"
+msgstr ""
+"我们相信，Nemiver 已经足够成熟，您可以用它轻松的调试自己喜欢的 C 或 C++ 应用"
+"程序了。"
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
@@ -47,10 +56,6 @@ msgstr "C/C++ 调试器"
 #: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Nemiver C/C++ 调试器"
-
-#: ../data/nemiver.desktop.in.h:4
-msgid "Debug Applications"
-msgstr "调试应用程序"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
@@ -232,7 +237,7 @@ msgid "Find this breakpoint in the source editor"
 msgstr "在源代码编辑器中定位到此断点"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:177
-#: ../src/uicommon/nmv-terminal.cc:174
+#: ../src/uicommon/nmv-terminal.cc:184
 msgid "_Copy"
 msgstr "复制(_C)"
 
@@ -259,9 +264,9 @@ msgstr "二进制文件"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-msgid "(Click here to see the next %d row of the call stack"
+msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
-msgstr[0] "(点击此处查看调用堆栈的下 %d 行)"
+msgstr[0] "(点击此处以查看调用堆栈的下 %d 行)"
 
 #: ../src/persp/dbgperspective/nmv-choose-overloads-dialog.cc:110
 msgid "Function Name"
@@ -292,113 +297,113 @@ msgstr "内存"
 msgid "Expression Monitor"
 msgstr "表达式监视器"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1730
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1715
 msgid "Reached end of file"
 msgstr "到达文件末尾"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1733
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
 #, c-format
 msgid "Could not find string %s"
 msgstr "找不到字符串 %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2117
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2103
 msgid "Change to Standard Breakpoint"
 msgstr "切换到标准断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2120
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2106
 msgid "Change to Countpoint"
 msgstr "更改至计数断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2122
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
 msgid "Remove _Breakpoint"
 msgstr "移除断点(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2125
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
 msgid "Disable Breakpoint"
 msgstr "禁用断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2127
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2113
 msgid "Enable Breakpoint"
 msgstr "启用断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2130
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
 msgid "Set _Breakpoint"
 msgstr "设置断点(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2132
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
 msgid "Set Countpoint"
 msgstr "设置计数断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2295
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
 msgstr "%s (path=\"%s\", pid=%i)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2309
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
 msgid "Connected to remote target!"
 msgstr "已连接到远程目标！"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2510
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
 msgid "Program exited"
 msgstr "程序已退出"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2539
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2528
 msgid "The underlying debugger engine process died."
 msgstr "底层调试器引擎进程死亡。"
 
 #. translators: first %s is the signal name, second one is the reason
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2643
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
 #, c-format
 msgid "Target received a signal: %s, %s"
 msgstr "目标收到一个信号：%s, %s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2658
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
 #, c-format
 msgid "An error occurred: %s"
 msgstr "发生一个错误：%s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2821
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2812
 #, c-format
 msgid "File %s has been modified. Do you want to reload it?"
 msgstr "%s 文件已被修改。重新载入它吗？"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3183
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3175
 msgid "_Detach From the Running Program"
 msgstr "从运行中的程序断开(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3184
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Disconnect the debugger from the running target without killing it"
 msgstr "从运行中的目标断开调试器而不杀死它"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3199
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
 msgid "_Save Session to Disk"
 msgstr "将会话保存到磁盘(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3200
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3192
 msgid "Save the current debugging session to disk"
 msgstr "将当前调试会话保存到磁盘"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3209
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
 msgid "_Run or Restart"
 msgstr "运行或重新启动(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3210
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
 msgid "Run or Restart the target"
 msgstr "运行或重启目标"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3219
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
 msgid "Set Breakpoint with Dialog..."
 msgstr "用对话框设置断点..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3220
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
 msgid "Set a breakpoint at the current line using a dialog"
 msgstr "使用对话框在当前行设置一个断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3231
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
 msgid "Set Breakpoint..."
 msgstr "设置断点..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3232
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3224
 msgid "Set a breakpoint at a function or line number"
 msgstr "在函数或行号处设置断点"
 
@@ -409,11 +414,11 @@ msgstr "在函数或行号处设置断点"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3248
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Toggle _Breakpoint"
 msgstr "切换断点(_B)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3249
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
 msgid "Set/Unset a breakpoint at the current cursor location"
 msgstr "在当前光标位置设置/清除断点"
 
@@ -424,11 +429,11 @@ msgstr "在当前光标位置设置/清除断点"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3266
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3258
 msgid "Enable/Disable Breakpoint"
 msgstr "启用/禁用断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3267
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3259
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr "启用或禁用当前光标位置设置的断点"
@@ -441,331 +446,329 @@ msgstr "启用或禁用当前光标位置设置的断点"
 #. this initial value is going to be displayed only when
 #. Nemiver is launched with no executable on the command
 #. line.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3287
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
 msgid "Toggle _Countpoint"
 msgstr "设置/取消计数断点(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3288
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
 msgid "Set/Unset a countpoint at the current cursor location"
 msgstr "在当前光标位置设置/清除计数断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3298
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
 msgid "Set Watchpoint with Dialog..."
 msgstr "使用对话框设置观察点..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3299
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3291
 msgid "Set a watchpoint using a dialog"
 msgstr "使用对话框设置一个观察点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3314
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 msgid "_Next"
 msgstr "下一步(_N)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3315
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3307
 msgid "Execute next line stepping over the next function, if any"
 msgstr "执行到下一行并跳过遇到的函数"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3324
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3316
 msgid "_Step"
 msgstr "进入(_S)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3325
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
 msgid "Execute next line, stepping into the next function, if any"
 msgstr "执行下一行，进入遇到的下一个函数"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3334
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3326
 msgid "Step _Out"
 msgstr "跳出(_O)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3335
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
 msgid "Finish the execution of the current function"
 msgstr "结束执行当前函数"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3344
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3336
 msgid "Step Into asm"
 msgstr "进入 asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3345
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
 msgid "Step into the next assembly instruction"
 msgstr "进入下一条汇编指令"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3354
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3346
 msgid "Step Over asm"
 msgstr "跳过 asm"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3355
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3347
 msgid "Step over the next assembly instruction"
 msgstr "跳过下一条汇编指令"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3364
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
 msgid "_Continue"
 msgstr "继续(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3365
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
 msgid "Continue program execution until the next breakpoint"
 msgstr "继续执行程序直到下一个断点"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3374
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
 msgid "Run to Cursor"
 msgstr "执行到光标处"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3375
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
 msgid "Continue program execution until the currently selected line is reached"
 msgstr "继续执行程序，直到当前选择的行"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3385
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3377
 msgid "Jump to Cursor"
 msgstr "跳到光标处"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3386
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3378
 msgid "Jump to the currently selected line"
 msgstr "跳到当前选择的行"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3396
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
 msgid "Jump and Stop to Cursor"
 msgstr "跳到光标处并停止"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3397
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr "在当前选择行设置一个断点并跳转到此"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3409
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
 msgid "Jump to a Given Location"
 msgstr "跳到指定位置"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3410
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3402
 msgid "Select a given code location and jump there"
 msgstr "选择一个指定的代码位置并跳转"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3421
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3413
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:1
 msgid "Inspect an Expression"
 msgstr "检查一个表达式"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3422
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3414
 msgid "Inspect a global or local expression"
 msgstr "检查一个全局或局部表达式"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3432
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3424
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:1
 msgid "Call a Function"
 msgstr "调用一个函数"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3433
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
 msgid "Call a function in the program being debugged"
 msgstr "在正在调试的程序中调用一个函数"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3442
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
 msgid "Show Global Variables"
 msgstr "显示全局变量"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3443
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3435
 msgid "Display all global variables"
 msgstr "显示所有全局变量"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3453
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3445
 msgid "Refresh Locals"
 msgstr "刷新局部变量"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3454
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3446
 msgid "Refresh the list of variables local to the current function"
 msgstr "刷新当前函数的局部变量列表"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3463
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3455
 msgid "Show Assembly"
 msgstr "显示汇编"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3464
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr "显示当前调试源代码的汇编代码，在另一标签中显示"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3476
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
 msgid "Switch to Assembly"
 msgstr "切换到汇编"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3477
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr "显示当前调试源代码的汇编代码"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3489
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
 msgid "Switch to Source"
 msgstr "切换到源代码"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3490
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3482
 msgid "Show the source code being currently debugged"
 msgstr "显示当前调试的源代码"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3502
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
 msgid "Stop"
 msgstr "停止"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3503
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3495
 msgid "Stop the debugger"
 msgstr "停止调试器"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3515
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3507
 msgid "_View"
 msgstr "视图(_V)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3526
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
 msgid "Switch to Target Terminal View"
 msgstr "切换到目标终端视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3537
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
 msgid "Switch to Context View"
 msgstr "切换到上下文视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3548
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3540
 msgid "Switch to Breakpoints View"
 msgstr "切换到断点视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3559
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3551
 msgid "Switch to Registers View"
 msgstr "切换到寄存器视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3571
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3563
 msgid "Switch to Memory View"
 msgstr "切换到内存视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3582
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3574
 msgid "Switch to Variables Monitor View"
 msgstr "切换到变量视图"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3591
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3583
 msgid "_Debug"
 msgstr "调试(_D)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3601
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3593
 msgid "_Open Source File..."
 msgstr "打开源代码文件(_O)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3602
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3594
 msgid "Open a source file for viewing"
 msgstr "打开一个源代码文件以查看"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3611
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
 msgid "Load _Executable..."
 msgstr "载入可执行程序(_E)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3612
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
 msgid "Execute a program"
 msgstr "执行程序"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3622
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3614
 msgid "_Load Core File..."
 msgstr "载入核心文件(_L)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3623
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
 msgid "Load a core file from disk"
 msgstr "从磁盘载入一个核心文件"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3633
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
 msgid "_Attach to Running Program..."
 msgstr "附到运行中的程序(_A)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3634
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3626
 msgid "Debug a program that's already running"
 msgstr "调试一个已经运行的程序"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3644
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
 msgid "_Connect to Remote Target..."
 msgstr "连接到远程目标(_C)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3645
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
 msgstr "连接到调试服务器以调试远程目标"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3656
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
 msgstr "恢复保存的会话(_V)..."
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3657
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
 msgid "Open a previously saved debugging session"
 msgstr "打开一个曾经保存的调试会话"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3667
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
 msgid "_Preferences"
 msgstr "首选顶(_P)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3668
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
 msgid "Edit the properties of the current session"
 msgstr "编辑当前会话的属性"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3682
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
 msgid "_Copy selected text"
 msgstr "复制选定的文本(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3683
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
 msgid "Copy the text selected in the current source file"
 msgstr "复制当前源文件中选定文本"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3692
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
 msgid "_Reload Source File"
 msgstr "重新载入源代码文件(_R)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3693
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
 msgid "Reloads the source file"
 msgstr "重新载入当前源代码文件"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3702
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
 msgid "_Close Source File"
 msgstr "关闭源代码文件(_C)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3703
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
 msgid "Close the opened file"
 msgstr "关闭打开的文件"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3712
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
 msgid "_Find"
 msgstr "查找(_F)"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3713
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
 msgid "Find a text string in file"
 msgstr "在文件中查找文本串"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4037
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
 #, c-format
 msgid "Close %s"
 msgstr "关闭 %s"
 
-#. We cannot restart an inferior running on a remote target at
-#. the moment.
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6027
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
 msgid "Sorry, it's impossible to restart a remote inferior"
 msgstr "抱歉，无法重启一个远程 inferior"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6172
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
 #, c-format
 msgid "Could not find file %s"
 msgstr "找不到 %s 文件"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6235
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6422
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6457
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
 #, c-format
 msgid "Could not load program: %s"
 msgstr "无法载入程序：%s"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6351
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
 msgid "You cannot attach to Nemiver itself"
 msgstr "您不能附到 Nemiver 程序自身"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6364
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
 msgid "You cannot attach to the underlying debugger engine"
 msgstr "您不能附到使用中的调试器引擎"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6656
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
 msgid "Failed to stop the debugger"
 msgstr "停止调试器失败"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6900
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
 #, c-format
 msgid "Invalid line number: %i"
 msgstr "无效的行号：%i"
 
-#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8532
+#: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
 #, c-format
 msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
@@ -1395,12 +1398,12 @@ msgstr "读"
 msgid "Write"
 msgstr "写"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:65
+#: ../src/uicommon/nmv-locate-file-dialog.cc:66
 #, c-format
 msgid "Select Location for %s"
 msgstr "选择 %s 的位置"
 
-#: ../src/uicommon/nmv-locate-file-dialog.cc:75
+#: ../src/uicommon/nmv-locate-file-dialog.cc:76
 #, c-format
 msgid ""
 "Cannot find file '%s'.\n"
@@ -1409,37 +1412,37 @@ msgstr ""
 "找不到 '%s' 文件。\n"
 "请指定该文件的位置："
 
-#: ../src/uicommon/nmv-source-editor.cc:645
+#: ../src/uicommon/nmv-source-editor.cc:646
 #, c-format
 msgid "Line: %i, Column: %i"
 msgstr "行：%i，列：%i"
 
-#: ../src/uicommon/nmv-source-editor.cc:1473
+#: ../src/uicommon/nmv-source-editor.cc:1490
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr "无法载入 %s 文件，因为它的编码与 %s 不同"
 
-#: ../src/uicommon/nmv-terminal.cc:175
+#: ../src/uicommon/nmv-terminal.cc:185
 msgid "Copy the selection"
 msgstr "复制所选"
 
-#: ../src/uicommon/nmv-terminal.cc:181
+#: ../src/uicommon/nmv-terminal.cc:191
 msgid "_Paste"
 msgstr "粘贴(_P)"
 
-#: ../src/uicommon/nmv-terminal.cc:182
+#: ../src/uicommon/nmv-terminal.cc:192
 msgid "Paste the clipboard"
 msgstr "粘贴剪贴板内容"
 
-#: ../src/uicommon/nmv-terminal.cc:188
+#: ../src/uicommon/nmv-terminal.cc:198
 msgid "_Reset"
 msgstr "重置(_R)"
 
-#: ../src/uicommon/nmv-terminal.cc:189
+#: ../src/uicommon/nmv-terminal.cc:199
 msgid "Reset the terminal"
 msgstr "重置终端"
 
-#: ../src/uicommon/nmv-ui-utils.cc:91
+#: ../src/uicommon/nmv-ui-utils.cc:94
 msgid "Do not ask me again"
 msgstr "不要再问我"
 
@@ -1454,7 +1457,8 @@ msgstr ""
 "lainme <lainme993@gmail.com>, 2010, 2012\n"
 "Lele Long <schemacs@gmail.com>, 2011\n"
 "YunQiang Su <wzssyqa@gmail.com>, 2011\n"
-"Wylmer Wang <wantinghard@gmail.com>, 2010, 2013"
+"Wylmer Wang <wantinghard@gmail.com>, 2010, 2013\n"
+"Jeff Bai <jeffbai@aosc.xyz>, 2015"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
