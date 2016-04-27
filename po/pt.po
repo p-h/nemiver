@@ -4,22 +4,23 @@
 # Duarte Loreto <happyguy_pt@hotmail.com>, 2012, 2013.
 # Tiago S. <almosthumane@portugalmail.pt>, 2014.
 # Pedro Albuquerque <palbuquerque73@gmail.com>, 2015.
+# Sérgio Cardeira <cardeira.sergio@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 3.12\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-12-09 08:08+0000\n"
-"PO-Revision-Date: 2015-12-13 07:42+0000\n"
-"Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
-"Language-Team: Português <palbuquerque73@gmail.com>\n"
+"POT-Creation-Date: 2015-12-13 07:43+0000\n"
+"PO-Revision-Date: 2016-02-21 20:30-0100\n"
+"Last-Translator: Sérgio Cardeira <cardeira.sergio@gmail.com>\n"
+"Language-Team: Português <gnome_pt@yahoogroups.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: ../data/nemiver.appdata.xml.in.h:1
 msgid ""
@@ -268,8 +269,6 @@ msgstr "Binário"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-#| msgid "(Click here to see the next %d row of the call stack"
-#| msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgstr[0] "(Clique aqui para ver a %d linha seguinte da pilha de chamada)"
@@ -323,7 +322,7 @@ msgstr "Alterar para ponto de contagem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2108
 msgid "Remove _Breakpoint"
-msgstr "Remover ponto de _Paragem"
+msgstr "Remover ponto de _paragem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2111
 msgid "Disable Breakpoint"
@@ -335,7 +334,7 @@ msgstr "Ativar ponto de paragem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2116
 msgid "Set _Breakpoint"
-msgstr "Definir ponto de _Paragem"
+msgstr "Definir ponto de _paragem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2118
 msgid "Set Countpoint"
@@ -394,7 +393,7 @@ msgstr "Gravar a sessão de depuração atual no disco"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3201
 msgid "_Run or Restart"
-msgstr "Executar ou _Reiniciar"
+msgstr "Executar ou _reiniciar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
 msgid "Run or Restart the target"
@@ -425,7 +424,7 @@ msgstr "Definir um ponto de paragem numa função ou número de linha"
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3240
 msgid "Toggle _Breakpoint"
-msgstr "Alternar ponto de _Paragem"
+msgstr "Alternar ponto de _paragem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
 msgid "Set/Unset a breakpoint at the current cursor location"
@@ -459,7 +458,7 @@ msgstr ""
 #. line.
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3279
 msgid "Toggle _Countpoint"
-msgstr "Alternar ponto de _Contagem"
+msgstr "Alternar ponto de _contagem"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
 msgid "Set/Unset a countpoint at the current cursor location"
@@ -484,7 +483,7 @@ msgstr ""
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3316
 msgid "_Step"
-msgstr "Pa_Sso"
+msgstr "Pa_sso"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3317
 msgid "Execute next line, stepping into the next function, if any"
@@ -492,7 +491,7 @@ msgstr "Executar a linha seguinte, entrando na próxima função, se existente"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3326
 msgid "Step _Out"
-msgstr "Sair _De"
+msgstr "Sair _de"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3327
 msgid "Finish the execution of the current function"
@@ -669,7 +668,7 @@ msgstr "Abrir um ficheiro de código para visualização"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3603
 msgid "Load _Executable..."
-msgstr "Carregar _Executável..."
+msgstr "Carregar _executável..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3604
 msgid "Execute a program"
@@ -701,7 +700,7 @@ msgstr "Ligar a um servidor de depuração para depurar um alvo remoto"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
-msgstr "Retomar sessão _Gravada..."
+msgstr "Retomar sessão _gravada..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
 msgid "Open a previously saved debugging session"
@@ -733,7 +732,7 @@ msgstr "Recarrega o ficheiro de código"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
 msgid "_Close Source File"
-msgstr "Fechar ficheiro de _Código"
+msgstr "Fechar ficheiro de _código"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
 msgid "Close the opened file"
@@ -832,11 +831,11 @@ msgstr "Uma disposição para monitores muito largos"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
-msgstr "Expandir _Selecionados"
+msgstr "Expandir _selecionados"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:134
 msgid "Expand _All"
-msgstr "Expandir _Todos"
+msgstr "Expandir _todos"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
@@ -1045,11 +1044,11 @@ msgstr "Opções de comparação:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
-msgstr "Comparar _Maiúsculas"
+msgstr "Comparar _maiúsculas"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
 msgid "Match _entire word only"
-msgstr "Comparar só palavra _Completa"
+msgstr "Comparar só palavra _completa"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "Cycling Options:"
@@ -1057,11 +1056,11 @@ msgstr "Opções de circulação:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
-msgstr "Dar a _Volta"
+msgstr "Dar a _volta"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
 msgid "Search _backwards"
-msgstr "Procurar para _Trás"
+msgstr "Procurar para _trás"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
@@ -1093,11 +1092,11 @@ msgstr "Abrir ficheiros de código"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
-msgstr "Selecionar do executável _Alvo"
+msgstr "Selecionar do executável _alvo"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
-msgstr "Selecionar do sistema de _Ficheiros"
+msgstr "Selecionar do sistema de _ficheiros"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
 msgid "Choose Source Files to Open"
@@ -1254,7 +1253,7 @@ msgstr "Escolha um processo a depurar"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
-msgstr "Lista de _Filtros:"
+msgstr "Lista de _filtros:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "Connect to Remote Target"
@@ -1343,17 +1342,17 @@ msgstr "_Evento:"
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr "Localização do _Binário:"
+msgstr "Localização do _binário:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
-msgstr "Localização do _Código fonte:"
+msgstr "Localização do _código fonte:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
-msgstr "Nome da F_Unção:"
+msgstr "Nome da F_unção:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
@@ -1392,7 +1391,7 @@ msgstr "Adicionar ao monitor"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
 msgid "_Variable Name:"
-msgstr "Nome da _Variável:"
+msgstr "Nome da _variável:"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
 msgid "_Inspect"
@@ -1452,7 +1451,7 @@ msgstr "Copiar a seleção"
 
 #: ../src/uicommon/nmv-terminal.cc:191
 msgid "_Paste"
-msgstr "Co_Lar"
+msgstr "Co_lar"
 
 #: ../src/uicommon/nmv-terminal.cc:192
 msgid "Paste the clipboard"
@@ -1499,7 +1498,7 @@ msgstr "_Editar"
 
 #: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
-msgstr "A_Juda"
+msgstr "A_juda"
 
 #: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
