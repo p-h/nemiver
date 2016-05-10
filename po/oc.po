@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver"
 "&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-12-09 08:08+0000\n"
-"PO-Revision-Date: 2016-03-03 22:34+0200\n"
+"POT-Creation-Date: 2016-03-03 21:35+0000\n"
+"PO-Revision-Date: 2016-05-08 18:51+0200\n"
 "Last-Translator: Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>\n"
 "Language-Team: Tot En Òc\n"
 "Language: oc\n"
@@ -302,7 +302,7 @@ msgstr "Contraròtle de l'expression"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1715
 msgid "Reached end of file"
-msgstr "Fin del fichièr atencha"
+msgstr "Fin del fichièr atenta"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:1718
 #, c-format
@@ -363,7 +363,7 @@ msgstr "Lo processus cibla a recebut  un senhal : %s, %s"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
 #, c-format
 msgid "An error occurred: %s"
-msgstr "Una error s'es producha : %s"
+msgstr "Una error s'es produita : %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2812
 #, c-format
@@ -515,7 +515,8 @@ msgid "_Continue"
 msgstr "_Contunhar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
-msgid "Contunha program execution until the next breakpoint"
+#| msgid "Contunha program execution until the next breakpoint"
+msgid "Continue program execution until the next breakpoint"
 msgstr "Contunha l'execucion del programa fins al punt d'arrèst seguent"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3366
@@ -523,7 +524,9 @@ msgid "Run to Cursor"
 msgstr "Executar fins al cursor"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
-msgid "Contunha program execution until the currently selected line is reached"
+#| msgid ""
+#| "Contunha program execution until the currently selected line is reached"
+msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Contunha l'execucion del programa fins a la linha actualament seleccionada"
 
@@ -594,7 +597,7 @@ msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr ""
-"Aficha lo còde assemblador del còde font en cors de desbugatge dins un autre "
+"Aficha lo còdi assemblador del còdi font en cors de desbugatge dins un autre "
 "onglet"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
@@ -603,7 +606,7 @@ msgstr "Bascular cap a l'assemblatge"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
 msgid "Show the assembly code of the source code being currently debugged"
-msgstr "Aficha lo code assemblador del còde font en cors de desbugatge"
+msgstr "Aficha lo còdi assemblador del còdi font en cors de desbugatge"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
 msgid "Switch to Source"
@@ -611,7 +614,7 @@ msgstr "Bascular cap a la font"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3482
 msgid "Show the source code being currently debugged"
-msgstr "Aficha lo còde font en cors de desbugatge"
+msgstr "Aficha lo còdi font en cors de desbugatge"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3494
 msgid "Stop"
@@ -691,7 +694,8 @@ msgstr "Se _connectar a una cibla distanta..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
-msgstr "Se connècta a un servidor de desbugatge per desbugar una cibla distanta"
+msgstr ""
+"Se connècta a un servidor de desbugatge per desbugar una cibla distanta"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
@@ -798,7 +802,7 @@ msgstr "Agençament per defaut de Nemiver"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
 msgid "Source Code"
-msgstr "Còde font"
+msgstr "Còdi font"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
 msgid "Dynamic Layout"
@@ -1470,8 +1474,7 @@ msgstr "Site Web del projècte"
 #. Translators: change this to your name, separate multiple names with \n
 #: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
-msgstr ""
-"Alain Lojewski <allomervan@gmail.com>"
+msgstr "Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
@@ -1507,7 +1510,7 @@ msgstr "_Ensenhador"
 
 #: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
-msgstr "Aficha lo manual utilizaire de aquesta aplicacion"
+msgstr "Aficha lo manual utilizaire d'aquesta aplicacion"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
