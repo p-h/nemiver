@@ -6,9 +6,9 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver"
-"&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-03-03 21:35+0000\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=nemiver&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2016-05-10 16:29+0000\n"
 "PO-Revision-Date: 2016-05-08 18:51+0200\n"
 "Last-Translator: Cédric Valmary (totenoc.eu) <cvalmary@yahoo.fr>\n"
 "Language-Team: Tot En Òc\n"
@@ -515,7 +515,6 @@ msgid "_Continue"
 msgstr "_Contunhar"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3357
-#| msgid "Contunha program execution until the next breakpoint"
 msgid "Continue program execution until the next breakpoint"
 msgstr "Contunha l'execucion del programa fins al punt d'arrèst seguent"
 
@@ -524,8 +523,6 @@ msgid "Run to Cursor"
 msgstr "Executar fins al cursor"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3367
-#| msgid ""
-#| "Contunha program execution until the currently selected line is reached"
 msgid "Continue program execution until the currently selected line is reached"
 msgstr ""
 "Contunha l'execucion del programa fins a la linha actualament seleccionada"
@@ -810,7 +807,7 @@ msgstr "Agençament dinamic"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
 msgid "A layout which can be modified"
-msgstr "Un agençament qui pòt èsser modificat"
+msgstr "Un agençament que pòt èsser modificat"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
 msgid "Two Status Pane"
@@ -891,7 +888,7 @@ msgstr "Crear un punt d'observacion"
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
-"Crèa un punt d'observacion qui se déclenche al moment del cambiament de la "
+"Crèa un punt d'observacion que se déclenche al moment del cambiament de la "
 "valor de l'expression"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
