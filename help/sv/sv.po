@@ -1,21 +1,33 @@
+# Swedish translation for nemiver manual.
+# Copyright © 2007-2016 nemiver's COPYRIGHT HOLDER
+# This file is distributed under the same license as the nemiver package.
+#
+# Daniel Nylander <po@danielnylander.se>, 2007.
+# Sebastian Rasmussen <sebras@gmail.com>, 2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver doc\n"
-"POT-Creation-Date: 2015-03-01 11:34+0000\n"
-"PO-Revision-Date: 2007-09-09 21:35+0100\n"
-"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
+"POT-Creation-Date: 2016-05-21 13:47+0000\n"
+"PO-Revision-Date: 2016-06-01 19:18+0200\n"
+"Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 1.8.7.1\n"
 
 #. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
-#, fuzzy
-#| msgid "translator-credits"
 msgctxt "_"
 msgid "translator-credits"
-msgstr "Daniel Nylander <po@danielnylander.se>, 2007"
+msgstr ""
+"Daniel Nylander <po@danielnylander.se>, 2007\n"
+"Sebastian Rasmussen <sebras@gmail.com>, 2016\n"
+"\n"
+"Skicka synpunkter på översättningen till\n"
+"<tp-sv@listor.tp-sv.se>."
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -27,6 +39,7 @@ msgctxt "_"
 msgid ""
 "external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
 msgstr ""
+"external ref='figures/main-window.png' md5='216a6e17325ddd6a4e96037d05a39734'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -39,6 +52,8 @@ msgid ""
 "external ref='figures/execute-dialog.png' "
 "md5='450a45378b4021176c8f093be2dedc97'"
 msgstr ""
+"external ref='figures/execute-dialog.png' "
+"md5='450a45378b4021176c8f093be2dedc97'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -46,15 +61,13 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:394
-#, fuzzy
-#| msgid ""
-#| "@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
 msgctxt "_"
 msgid ""
 "external ref='figures/attach-dialog.png' "
 "md5='9940de171b58f92ea810dc4478364976'"
 msgstr ""
-"@@image: 'figures/attach-dialog.png'; md5=15875311bd98ebfa1fea19cf9af06cca"
+"external ref='figures/attach-dialog.png' "
+"md5='9940de171b58f92ea810dc4478364976'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -62,16 +75,13 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:440
-#, fuzzy
-#| msgid ""
-#| "@@image: 'figures/load-core-dialog.png'; "
-#| "md5=7bba55bf735e2c83a240713346b03621"
 msgctxt "_"
 msgid ""
 "external ref='figures/load-core-dialog.png' "
 "md5='2a3dd09883a026826d0a7036991720a4'"
 msgstr ""
-"@@image: 'figures/load-core-dialog.png'; md5=7bba55bf735e2c83a240713346b03621"
+"external ref='figures/load-core-dialog.png' "
+"md5='2a3dd09883a026826d0a7036991720a4'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -84,6 +94,8 @@ msgid ""
 "external ref='figures/connect-remote-dialog.png' "
 "md5='0f47f358e68947aaf1330fb1c1013f72'"
 msgstr ""
+"external ref='figures/connect-remote-dialog.png' "
+"md5='0f47f358e68947aaf1330fb1c1013f72'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -91,17 +103,13 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:593
-#, fuzzy
-#| msgid ""
-#| "@@image: 'figures/variable-inspector.png'; "
-#| "md5=288952a65ba8c54d2003c38a6f1f0eb7"
 msgctxt "_"
 msgid ""
 "external ref='figures/variable-inspector.png' "
 "md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
 msgstr ""
-"@@image: 'figures/variable-inspector.png'; "
-"md5=288952a65ba8c54d2003c38a6f1f0eb7"
+"external ref='figures/variable-inspector.png' "
+"md5='676c2a7985aa4e41f5a77a85bcfd8a27'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -114,6 +122,8 @@ msgid ""
 "external ref='figures/global-variables-dialog.png' "
 "md5='b3224457732491046fbcea9491df2383'"
 msgstr ""
+"external ref='figures/global-variables-dialog.png' "
+"md5='b3224457732491046fbcea9491df2383'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -121,17 +131,13 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:667
-#, fuzzy
-#| msgid ""
-#| "@@image: 'figures/set-breakpoint-dialog.png'; "
-#| "md5=d67a22068597943204b452ad59a690ce"
 msgctxt "_"
 msgid ""
 "external ref='figures/set-breakpoint-dialog.png' "
 "md5='86618670e2f62026adeb38ae033ec38d'"
 msgstr ""
-"@@image: 'figures/set-breakpoint-dialog.png'; "
-"md5=d67a22068597943204b452ad59a690ce"
+"external ref='figures/set-breakpoint-dialog.png' "
+"md5='86618670e2f62026adeb38ae033ec38d'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -144,6 +150,8 @@ msgid ""
 "external ref='figures/enabled-breakpoint.png' "
 "md5='a51237a0756cdb7a754b24b211e40bbb'"
 msgstr ""
+"external ref='figures/enabled-breakpoint.png' "
+"md5='a51237a0756cdb7a754b24b211e40bbb'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -156,6 +164,8 @@ msgid ""
 "external ref='figures/disabled-breakpoint.png' "
 "md5='b703d696cec0c49810de7f2a85f0ddba'"
 msgstr ""
+"external ref='figures/disabled-breakpoint.png' "
+"md5='b703d696cec0c49810de7f2a85f0ddba'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -163,17 +173,13 @@ msgstr ""
 #. update your localized copy. The msgstr is not used at all. Set it to
 #. whatever you like once you have updated your copy of the file.
 #: C/index.docbook:739
-#, fuzzy
-#| msgid ""
-#| "@@image: 'figures/open-files-target.png'; "
-#| "md5=372c30907bb4f1d25e7e966d85c42de2"
 msgctxt "_"
 msgid ""
 "external ref='figures/open-files-target.png' "
 "md5='715003a703fc7cc112bea9e58a25f627'"
 msgstr ""
-"@@image: 'figures/open-files-target.png'; "
-"md5=372c30907bb4f1d25e7e966d85c42de2"
+"external ref='figures/open-files-target.png' "
+"md5='715003a703fc7cc112bea9e58a25f627'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -186,6 +192,8 @@ msgid ""
 "external ref='figures/registers-view.png' "
 "md5='25b369f4f3f0a42c04ded0f8880435ba'"
 msgstr ""
+"external ref='figures/registers-view.png' "
+"md5='25b369f4f3f0a42c04ded0f8880435ba'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -197,6 +205,7 @@ msgctxt "_"
 msgid ""
 "external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
 msgstr ""
+"external ref='figures/memory-view.png' md5='b2a94da383551b3eaae64ddb93a7128f'"
 
 #. (itstool) path: imagedata
 #. This is a reference to an external file such as an image or video. When
@@ -209,6 +218,8 @@ msgid ""
 "external ref='figures/sessions-dialog.png' "
 "md5='d07fd79198e666ca9b21fee3bbb30db4'"
 msgstr ""
+"external ref='figures/sessions-dialog.png' "
+"md5='d07fd79198e666ca9b21fee3bbb30db4'"
 
 #. (itstool) path: articleinfo/title
 #: C/index.docbook:24
@@ -218,7 +229,7 @@ msgstr "Handbok för Nemiver"
 #. (itstool) path: articleinfo/copyright
 #: C/index.docbook:25
 msgid "<year>2008</year> <holder>Jonathon Jongsma</holder>"
-msgstr ""
+msgstr "<year>2008</year> <holder>Jonathon Jongsma</holder>"
 
 #. (itstool) path: publisher/publishername
 #: C/index.docbook:38
@@ -231,6 +242,8 @@ msgid ""
 "<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
 "<orgname>GNOME</orgname> </affiliation>"
 msgstr ""
+"<firstname>Jonathon</firstname> <surname>Jongsma</surname> <affiliation> "
+"<orgname>GNOME</orgname> </affiliation>"
 
 #. (itstool) path: revdescription/para
 #: C/index.docbook:71
@@ -240,24 +253,22 @@ msgstr "Initial version"
 #. (itstool) path: revhistory/revision
 #: C/index.docbook:67
 msgid "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
-msgstr ""
+msgstr "<revnumber>1.0</revnumber> <date>2007</date> <_:revdescription-1/>"
 
 #. (itstool) path: revdescription/para
 #: C/index.docbook:78
 msgid "Updated for 0.5.0 Release"
-msgstr ""
+msgstr "Uppdaterad inför publicering av 0.5.0"
 
 #. (itstool) path: revhistory/revision
 #: C/index.docbook:74
 msgid "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
-msgstr ""
+msgstr "<revnumber>2.0</revnumber> <date>2008</date> <_:revdescription-1/>"
 
 #. (itstool) path: articleinfo/releaseinfo
 #: C/index.docbook:82
-#, fuzzy
-#| msgid "This manual describes version 0.3.0 of Nemiver."
 msgid "This manual describes version 0.5.0 of Nemiver."
-msgstr "Den här handboken beskriver version 0.3.0 av Nemiver."
+msgstr "Denna handbok beskriver version 0.5.0 av Nemiver."
 
 #. (itstool) path: legalnotice/title
 #: C/index.docbook:85
@@ -271,6 +282,10 @@ msgid ""
 "application> application or this manual, see the <ulink url=\"http://www."
 "gnome.org/projects/nemiver/\" type=\"http\">Nemiver Project website</ulink>."
 msgstr ""
+"För att rapportera ett fel eller lämna in ett förslag angående programmet "
+"<application>Nemiver</application> eller denna handbok, se <ulink url="
+"\"http://www.gnome.org/projects/nemiver/\" type=\"http\">Nemivers "
+"projektwebbplats</ulink>."
 
 #. (itstool) path: abstract/para
 #: C/index.docbook:94
@@ -280,22 +295,22 @@ msgstr "Nemiver är en grafisk felsökare för skrivbordsmiljön GNOME."
 #. (itstool) path: article/indexterm
 #: C/index.docbook:99
 msgid "<primary>Nemiver</primary>"
-msgstr ""
+msgstr "<primary>Nemiver</primary>"
 
 #. (itstool) path: article/indexterm
 #: C/index.docbook:102
 msgid "<primary>debugger</primary>"
-msgstr ""
+msgstr "<primary>felsökare</primary>"
 
 #. (itstool) path: article/indexterm
 #: C/index.docbook:105
 msgid "<primary>gdb</primary>"
-msgstr ""
+msgstr "<primary>gdb</primary>"
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:111
 msgid "Overview"
-msgstr ""
+msgstr "Översikt"
 
 #. (itstool) path: sect1/para
 #: C/index.docbook:112
@@ -304,11 +319,15 @@ msgid ""
 "integrates well in the GNOME desktop environment. It currently features a "
 "backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
 msgstr ""
+"Nemiver är ett pågående projekt för att skriva en fristående grafisk "
+"felsökare som integrerar väl med GNOME:s skrivbordsmiljö. Det har för "
+"närvarande en bakände som använder den välkända GNU-felsökaren gdb för att "
+"felsöka C / C++-program."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:119
 msgid "Perspectives"
-msgstr ""
+msgstr "Perspektiv"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:120
@@ -320,6 +339,12 @@ msgid ""
 "<application>valgrind</application>, or for profiling tools such as "
 "<application>oprofile</application>."
 msgstr ""
+"Nemiver är designat som en allmän grafisk <interface>arbetsyta</interface> "
+"och ett system med insticksmoduler som kan erbjuda flera olika perspektiv. "
+"För närvarande är det enda perspektiv som erbjuds ett felsökningsperspektiv, "
+"men i framtiden kan perspektiv läggas till för minnesfelsökning med "
+"<application>valgrind</application> eller för profileringsverktyg så som "
+"<application>oprofile</application>."
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:132
@@ -332,6 +357,8 @@ msgid ""
 "This section explains how to start Nemiver and gives a basic overview of the "
 "application."
 msgstr ""
+"Detta avsnitt berättar hur du startar Nemiver och ger en grundläggande "
+"översikt över programmet."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:138
@@ -354,8 +381,8 @@ msgid ""
 "Choose <menuchoice><guisubmenu>Programming</guisubmenu><guimenuitem>Nemiver "
 "Debugger</guimenuitem></menuchoice>."
 msgstr ""
-"Välj <menuchoice><guisubmenu>Programmering</"
-"guisubmenu><guimenuitem>Felsökaren Nemiver</guimenuitem></menuchoice>."
+"Välj <menuchoice><guisubmenu>Programmering</guisubmenu><guimenuitem>Nemiver "
+"felsökare</guimenuitem></menuchoice>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:152
@@ -366,6 +393,7 @@ msgstr "Kommandorad"
 #: C/index.docbook:154
 msgid "Type <command>nemiver</command>, then press <keycap>Return</keycap>."
 msgstr ""
+"Skriv <command>nemiver</command> och tryck sedan <keycap>Retur</keycap>."
 
 #. (itstool) path: tip/title
 #: C/index.docbook:159
@@ -378,6 +406,8 @@ msgid ""
 "You can find a list of options that can be passed to Nemiver on the command "
 "line by typing <command>nemiver --help-all</command>."
 msgstr ""
+"Du kan hitta en lista över flaggor som kan anges på kommandoraden till "
+"Neimiver genom att skriva <command>nemiver --help-all</command>."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:170
@@ -390,6 +420,7 @@ msgid ""
 "When you start Nemiver, you will see a window that looks very much like the "
 "following:"
 msgstr ""
+"När du startar Nemiver kommer du att se ett fönster som liknar det följande:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:176
@@ -403,13 +434,16 @@ msgid ""
 "> </imageobject> <textobject> <phrase>Shows Nemiver main window.</phrase> </"
 "textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/main-window.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Visar Nemivers huvudfönster.</phrase> "
+"</textobject>"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:188
 msgid ""
 "The <application>Nemiver</application> window contains the following "
 "elements:"
-msgstr ""
+msgstr "Fönstret <application>Nemiver</application> innehåller följande delar:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:194
@@ -422,6 +456,8 @@ msgid ""
 "The menus on the menubar contain all of the commands you need to use "
 "<application>Nemiver</application>."
 msgstr ""
+"Menyerna i menyraden innehåller alla kommandon du behöver för att använda "
+"<application>Nemiver</application>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:203
@@ -434,11 +470,13 @@ msgid ""
 "The toolbar contains the basic debugging actions that can be used to run or "
 "step through the program being debugged."
 msgstr ""
+"Verktygsfältet innehåller de grundläggande felsökningsåtgärderna som kan "
+"användas för att köra eller stega genom programmet som felsöks."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:212
 msgid "Source View Notebook"
-msgstr ""
+msgstr "Källkodsvy i anteckningsbok"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:214
@@ -446,11 +484,13 @@ msgid ""
 "When source files are open, this area will display source files of the "
 "program being debugged."
 msgstr ""
+"När källkodsfiler är öppna kommer denna yta att visa källkodsfiler för "
+"programmet som felsöks."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:221
 msgid "Status Notebook"
-msgstr ""
+msgstr "Statusanteckningsbok"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:223
@@ -458,6 +498,8 @@ msgid ""
 "The Status notebook contains several tabs for displaying information about "
 "the program being debugged. These include the following:"
 msgstr ""
+"Statusanteckningsboken innehåller flera flikar som visar information om "
+"programmet som felsöks. Dessa inkluderar följande:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:230
@@ -469,6 +511,7 @@ msgstr "Stackspårning"
 msgid ""
 "Displays the current state of the call stack of the program being debugged."
 msgstr ""
+"Visar det aktuella tillståndet för anropsstacken för programmet som felsöks."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:241
@@ -481,6 +524,8 @@ msgid ""
 "Displays a list of all local variables and function arguments, in addition "
 "to their values and types."
 msgstr ""
+"Visar en lista över alla lokala variabler och funktionsargument tillsammans "
+"med deras värden och typer."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:252
@@ -493,6 +538,8 @@ msgid ""
 "If the program being debugged prints any output to the terminal, it will be "
 "displayed in this tab."
 msgstr ""
+"Om programmet som felsöks skriver någon utdata till terminalen kommer den "
+"att visas i denna flik."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:263
@@ -509,12 +556,19 @@ msgid ""
 "can be deleted, enabled, or disabled in this tab. For more information about "
 "breakpoints, see <xref linkend=\"nemiver-sect-breakpoints\"/>."
 msgstr ""
+"Denna flik visar en lista över alla brytpunkter som har ställts in. Du kan "
+"visa källkoden för en specifik brytpunkt genom att dubbelklicka på ett "
+"objekt i listan eller genom att högerklicka och välja "
+"<menuchoice><guimenuitem>Gå till källkod</guimenuitem></menuchoice> från "
+"menyn. Brytpunkter kan dessutom tas bort, aktiveras eller inaktiveras i "
+"denna flik. För vidare information om brytpunkter se <xref linkend=\"nemiver-"
+"sect-breakpoints\"/>."
 
 #. (itstool) path: varlistentry/term
 #. (itstool) path: sect3/title
 #: C/index.docbook:280 C/index.docbook:766
 msgid "Registers"
-msgstr ""
+msgstr "Register"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:284
@@ -522,12 +576,14 @@ msgid ""
 "This tab displays all of the CPU registers and their values. For more "
 "information, see <xref linkend=\"nemiver-sect-registers\"/>."
 msgstr ""
+"Denna flik visar alla CPU-register och deras värden. För vidare information "
+"se <xref linkend=\"nemiver-sect-registers\"/>."
 
 #. (itstool) path: varlistentry/term
 #. (itstool) path: sect3/title
 #: C/index.docbook:291 C/index.docbook:793
 msgid "Memory"
-msgstr ""
+msgstr "Minne"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:295
@@ -535,11 +591,14 @@ msgid ""
 "This tab displays a view of the current state of a specific memory location. "
 "For more information, see <xref linkend=\"nemiver-sect-memory\"/>."
 msgstr ""
+"Denna flik visar en vy över det aktuella tillståndet för specifika "
+"minnespositioner. För vidare information se <xref linkend=\"nemiver-sect-"
+"memory\"/>."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:307
 msgid "Choosing a Program to Debug"
-msgstr ""
+msgstr "Att välja ett program att felsöka"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:308
@@ -548,21 +607,24 @@ msgid ""
 "load a local executable file, load a core file, attach to a running process, "
 "or connect to a remote debugging server."
 msgstr ""
+"Det finns flera sätt att börja felsöka ett program. Nemiver låter dig läsa "
+"in en lokal körbar fil, läsa in en minnesfil, fästa till en körande process "
+"eller ansluta till en fjärrfelsökningsserver."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:313
-#, fuzzy
-#| msgid "Debugging an Executable"
 msgid "Debugging an Executable Program"
-msgstr "Felsök en körbar fil"
+msgstr "Felsökning av ett körbart program"
 
 #. (itstool) path: sect4/title
 #. (itstool) path: sect3/title
 #: C/index.docbook:315 C/index.docbook:380 C/index.docbook:425
 #: C/index.docbook:462 C/index.docbook:852
 msgid "Using the Workbench"
-msgstr ""
+msgstr "Att använda arbetsytan"
 
+# sebras: b852dbf9a768095c02fc7db27de6bbbd7c5ffaaf renames from Execute... to Load Executable... which is then translated into Läs in _körbar fil…
+# https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: sect4/para
 #: C/index.docbook:316
 msgid ""
@@ -570,11 +632,14 @@ msgid ""
 "</guimenu><guimenuitem> Execute... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"För att välja ett körbart program att felsöka, välj <menuchoice><guimenu> "
+"Arkiv </guimenu><guimenuitem> Körbar fil… </guimenuitem></menuchoice> vilket "
+"bör visa följande dialog:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:325
 msgid "Execute Dialog"
-msgstr ""
+msgstr "Kördialog"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:327
@@ -583,6 +648,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>Shows dialog for selecting an "
 "executable to run</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/execute-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Visar dialogen där den körbara "
+"filen väljs</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:337
@@ -592,6 +660,10 @@ msgid ""
 "directory to run the executable in, and any Environment Variables that "
 "should be set when the executable is being debugged."
 msgstr ""
+"I denna dialog kan du välja programmet som ska felsökas, vilka argument "
+"eller flaggor som ska skickas på kommandoraden till den körbara filen, "
+"vilken arbetskatalog den körbara filen ska köras i och vilka miljövariabler "
+"som ska ställas in när den körbara filen felsöks."
 
 #. (itstool) path: sect4/title
 #: C/index.docbook:345 C/index.docbook:411 C/index.docbook:450
@@ -608,25 +680,26 @@ msgid ""
 "the executable. For example, if <filename>/usr/bin</filename> is in your "
 "path, both of the following are valid:"
 msgstr ""
+"För att från kommandoraden starta ett körbart program att felsöka anges helt "
+"enkelt namnet på den körbara filen. Du kan antingen ange en absolut sökväg "
+"till den körbara filen, eller om den finns i sökvägen helt enkelt ange "
+"basnamnet för den körbara filen. Om till exempel <filename>/usr/bin</"
+"filename> finns i din sökväg är dessa båda giltiga:"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:356
-#, fuzzy
-#| msgid "nemiver /usr/bin/progname"
 msgid "<command>nemiver /usr/bin/progname</command>"
-msgstr "nemiver /usr/bin/programnamn"
+msgstr "<command>nemiver /usr/bin/programnamn</command>"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:361
-#, fuzzy
-#| msgid "nemiver progname"
 msgid "<command>nemiver progname</command>"
-msgstr "nemiver programnamn"
+msgstr "<command>nemiver programnamn</command>"
 
 #. (itstool) path: tip/title
 #: C/index.docbook:367
 msgid "Passing Options on the Command Line"
-msgstr ""
+msgstr "Ange flaggor på kommandoraden"
 
 #. (itstool) path: tip/para
 #: C/index.docbook:368
@@ -635,6 +708,9 @@ msgid ""
 "debugging, you should enclose them in quotes to prevent Nemiver from "
 "processing them: <command>nemiver \"prognam --arg1 --arg2\"</command>."
 msgstr ""
+"Om du vill skicka kommandoradsflaggor till programmet som du felsöker bör du "
+"omsluta dem i citattecken för att förhindra att Nemiver behandlar dem: "
+"<command>nemiver \"programnamn --arg1 --arg2\"</command>."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:378
@@ -648,11 +724,14 @@ msgid ""
 "Attach to Running Program... </guimenuitem></menuchoice>, which should "
 "display the following dialog:"
 msgstr ""
+"Välj menyobjektet <menuchoice><guimenu> Arkiv </guimenu><guimenuitem> Fäst "
+"till körande program… </guimenuitem></menuchoice> vilket bör visa följande "
+"dialog:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:390
 msgid "Attach Dialog"
-msgstr ""
+msgstr "Fästdialog"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:392
@@ -661,6 +740,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>Shows dialog for attaching to a "
 "running program</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/attach-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Visar dialog för att fästa till ett "
+"körande program</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:402
@@ -671,7 +753,12 @@ msgid ""
 "interested in by typing some text into the text entry located just below the "
 "list."
 msgstr ""
+"Välj en process från listan och klicka på <guibutton>OK</guibutton> för att "
+"börja felsöka det valda programmet. Det kan finnas flera processer listade i "
+"dialogen så du kan filtrera listan så att bara de som du är intresserad av "
+"visas genom att skriva in text i textinmatningsrutan precis under listan."
 
+# sebras: PID is better than pid. https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: sect4/para
 #: C/index.docbook:412
 msgid ""
@@ -682,11 +769,17 @@ msgid ""
 "<command>nemiver --attach foo</command> or <command>nemiver --attach 1121</"
 "command>."
 msgstr ""
+"För att fästa till ett körande program från kommandoraden använd flaggan "
+"<option>--attach</option>. Flaggan <option>--attach</option> accepterar "
+"antingen en PID eller ett processnamn. Så för att till exempel felsöka den "
+"körande processen <command>foo</command> som har PID 1121 kan du antingen "
+"skriva <command>nemiver --attach foo</command> eller <command>nemiver --"
+"attach 1121</command>."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:423
 msgid "Loading a Core File"
-msgstr ""
+msgstr "Läsa in en minnesfil"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:426
@@ -695,11 +788,14 @@ msgid ""
 "Core File... </guimenuitem></menuchoice> to bring up the following dialog, "
 "which will let you load a core file:"
 msgstr ""
+"Välj menyobjektet <menuchoice><guimenu> Arkiv </guimenu><guimenuitem> Läs in "
+"minnesfil… </guimenuitem></menuchoice> för att få upp följande dialog som "
+"låter dig läsa in en minnesfil:"
 
 #. (itstool) path: figure/title
 #: C/index.docbook:436
 msgid "Load Core File Dialog"
-msgstr ""
+msgstr "Dialog för att läsa in en minnesfil"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:438
@@ -708,34 +804,35 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for loading a "
 "core file</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/load-core-dialog.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Visar dialog för att läsa in "
+"en minnesfil</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:451
 msgid "Core files cannot be loaded from the command line."
-msgstr ""
+msgstr "Minnesfiler kan inte läsas in från kommandoraden."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:457
 msgid "Remote Debugging"
-msgstr ""
+msgstr "Fjärrfelsökning"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:458
 msgid "Nemiver allows you to connect to a remote debugging server."
-msgstr ""
+msgstr "Nemiver låter dig ansluta till en fjärrfelsökningsserver."
 
+# sebras: no trailing period? https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: sect4/para
 #: C/index.docbook:463
-#, fuzzy
-#| msgid ""
-#| "Choose <menuchoice><guisubmenu>Programming</"
-#| "guisubmenu><guimenuitem>Nemiver Debugger</guimenuitem></menuchoice>."
 msgid ""
 "To connect to a remote debugging server, select <menuchoice><guimenu>File</"
 "guimenu><guimenuitem>Connect to Remote Target...</guimenuitem></menuchoice>"
 msgstr ""
-"Välj <menuchoice><guisubmenu>Programmering</"
-"guisubmenu><guimenuitem>Felsökaren Nemiver</guimenuitem></menuchoice>."
+"För att ansluta till en fjärrfelsökningsserver, välj "
+"<menuchoice><guimenu>Arkiv</guimenu><guimenuitem>Anslut till fjärrmål…</"
+"guimenuitem></menuchoice>"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:469
@@ -744,6 +841,9 @@ msgid ""
 "format=\"PNG\"/> </imageobject> <textobject> <phrase>Remote Debugging "
 "Dialog</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/connect-remote-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialog för "
+"fjärrfelsökning</phrase> </textobject>"
 
 #. (itstool) path: sect4/para
 #: C/index.docbook:478
@@ -752,13 +852,18 @@ msgid ""
 "are located, and then fill in the details about connecting to the remote "
 "server."
 msgstr ""
+"Välj den körbara filen som ska läsas in och platsen där delade bibliotek "
+"finns och fyll sedan i detaljerna om anslutningen till fjärrservern."
 
+# sebras: no trailing period? https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: sect4/para
 #: C/index.docbook:486
 msgid ""
 "Nemiver does not provide a way to connect to a remote server using the "
 "command line"
 msgstr ""
+"Nemiver tillhandahåller inte ett sätt att ansluta till en fjärrserver från "
+"kommandoraden"
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:495
@@ -769,11 +874,12 @@ msgstr "Användning av Nemiver"
 #: C/index.docbook:496
 msgid "This section describes how to use Nemiver to debug your application."
 msgstr ""
+"Detta avsnitt beskriver hur du använder Nemiver för att felsöka ditt program."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:500
 msgid "Basic Debugging Actions"
-msgstr ""
+msgstr "Grundläggande felsökningsåtgärder"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:501
@@ -782,6 +888,9 @@ msgid ""
 "<guimenu>Debug</guimenu> menu, and as keyboard shortcuts. The most common "
 "actions are listed below:"
 msgstr ""
+"De grundläggande felsökningsåtgärderna finns tillgängliga i "
+"huvudverktygsfältet, i menyn <guimenu>Felsök</guimenu> och som "
+"tangentbordsgenvägar. De vanligaste åtgärderna listas nedan:"
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:508
@@ -796,6 +905,10 @@ msgid ""
 "<action>Stop</action>. This action can be activated from the keyboard with "
 "<keycap>F5</keycap>."
 msgstr ""
+"Startar programmet. Programmet kommer att köra tills det når en brytpunkt "
+"eller tills programmet avslutas om det inte avbryts manuellt av att "
+"användaren klickar på <action>Stopp</action>. Denna åtgärd kan aktiveras "
+"från tangentbordet med <keycap>F5</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:520
@@ -809,6 +922,9 @@ msgid ""
 "file. Some debuggers may call this action \"Step Over\". This action can be "
 "activated from the keyboard with <keycap>F6</keycap>."
 msgstr ""
+"Exekverar nästa sats och stannar när det når nästa rad i denna fil. Vissa "
+"felsökare kan kalla denna åtgärd ”Stega över”. Denna åtgärd kan aktiveras "
+"från tangentbordet med <keycap>F6</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:531
@@ -822,6 +938,9 @@ msgid ""
 "debuggers may call this action \"Step In\". This action can be activated "
 "from the keyboard with <keycap>F7</keycap>."
 msgstr ""
+"Exekverar nästa sats, stegar in i funktioner om möjligt. Vissa felsökare kan "
+"kalla denna åtgärd ”Stega in”. Denna åtgärd kan aktiveras från tangentbordet "
+"med <keycap>F7</keycap>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:541
@@ -835,6 +954,9 @@ msgid ""
 "calling function. This action can be activated from the keyboard with "
 "<keycombo><keycap>Shift</keycap><keycap>F7</keycap></keycombo>."
 msgstr ""
+"Avslutar exekveringen av aktuell funktion och stannar när den når den "
+"anropande funktionen. Denna åtgärd kan aktiveras från tangentbordet med "
+"<keycombo><keycap>Skift</keycap><keycap>F7</keycap></keycombo>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:552
@@ -848,6 +970,9 @@ msgid ""
 "action can be activated from the keyboard with <keycombo><keycap>Shift</"
 "keycap><keycap>F5</keycap></keycombo>."
 msgstr ""
+"Läser in aktuell körbar fil på nytt och startar exekveringen från början. "
+"Denna åtgärd kan aktiveras från tangentbordet med <keycombo><keycap>Skift</"
+"keycap><keycap>F5</keycap></keycombo>."
 
 #. (itstool) path: varlistentry/term
 #: C/index.docbook:562
@@ -862,6 +987,10 @@ msgid ""
 "<action>Continue</action>). This action can be activated from the keyboard "
 "with <keycap>F9</keycap>."
 msgstr ""
+"Avbryter manuellt exekveringen av att program. Denna åtgärd är bara "
+"tillgänglig när felsökaren kör den körbara filen (t.ex. efter att användaren "
+"har klickat på <action>Fortsätt</action>). Denna åtgärd kan aktiveras från "
+"tangentbordet med <keycap>F9</keycap>."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:573
@@ -873,14 +1002,19 @@ msgid ""
 "variables\"/>), or set additional breakpoints (see <xref linkend=\"nemiver-"
 "sect-breakpoints\"/>)."
 msgstr ""
+"Som standard kommer Nemiver, efter att en körbar fil lästs in, att skapa en "
+"brytpunkt vid <function>main()</function> så att när exekveringen når "
+"<function>main()</function> kommer den att stanna och vänta på indata. Du "
+"kan sedan stega genom programmet, undersöka variabler (se <xref linkend="
+"\"nemiver-sect-inspecting-variables\"/>), eller ställa in ytterligare "
+"brytpunkter (se <xref linkend=\"nemiver-sect-breakpoints\"/>)."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:582
-#, fuzzy
-#| msgid "Variables"
 msgid "Inspecting Variables"
-msgstr "Variabler"
+msgstr "Inspektion av variabler"
 
+# sebras: b8d01e52d1cdab0aaae0b469f5a64a6e36065b9a Variable Inspector -> Expression Inspector, Inspect a Variable -> Inspect an Expression. https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: sect2/para
 #: C/index.docbook:583
 msgid ""
@@ -893,6 +1027,14 @@ msgid ""
 "guimenuitem></menuchoice>. When the variable inspector comes up, you'll see "
 "a window that looks similar to the following:"
 msgstr ""
+"Nemiver visar en lista över alla lokala variabler i fliken "
+"<interface>Variabler</interface> i <interface>Statusanteckningsboken</"
+"interface>. Om du skulle vilja undersöka en annan variabel (eller till och "
+"med ett godtyckligt uttryck), kan du använda <interface>Variabelinspektören</"
+"interface>. För att visa <interface>Variabelinspektören</interface> välj "
+"<menuchoice><guimenu>Felsök</guimenu><guimenuitem>Inspektera en variabel</"
+"guimenuitem></menuchoice>. När variabelinspektören visas kommer du att se "
+"ett fönster som liknar följande:"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:591
@@ -901,6 +1043,9 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Variable Inspector Dialog</"
 "phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/variable-inspector.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Dialog som visar "
+"variabelinspektören</phrase> </textobject>"
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:600
@@ -909,6 +1054,9 @@ msgid ""
 "&gt;bar</literal>) into the input box, and if the variable is valid and in "
 "scope, it will be display details about that expression."
 msgstr ""
+"Du kan skriva in vilket variabelnamn som helst eller ett enkelt uttryck (så "
+"som <literal>pFoo-&gt;bar</literal>) i inmatningsrutan och om variabeln är "
+"giltig och inom räckvidd kommer den att visa detaljer om det uttrycket."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:605
@@ -918,6 +1066,10 @@ msgid ""
 "interface>, it will attempt to display information about the selected "
 "variable name."
 msgstr ""
+"Alternativt, om du väljer namnet på en variabel i "
+"<interface>källkodsredigeraren</interface> och sedan startar "
+"<interface>Variabelinspektören</interface> kommer den att försöka att visa "
+"information om det valda variabelnamnet."
 
 #. (itstool) path: tip/title
 #: C/index.docbook:612
@@ -930,6 +1082,8 @@ msgid ""
 "You can also start the <interface>Variable Inspector</interface> by pressing "
 "<keycap>F12</keycap>."
 msgstr ""
+"Du kan också starta <interface>Variabelinspektören</interface> genom att "
+"trycka <keycap>F12</keycap>."
 
 #. (itstool) path: sect2/para
 #: C/index.docbook:618
@@ -940,6 +1094,11 @@ msgid ""
 "guimenu><guimenuitem>Show Global Variables</guimenuitem></menuchoice> or "
 "press <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 msgstr ""
+"Nemiver kommer också att låta dig visa en lista över alla globala variabler "
+"i ett program i en separat dialog. För att visa dialogen <interface>Globala "
+"variabler</interface>, välj <menuchoice><guimenu>Felsök</"
+"guimenu><guimenuitem>Visa globala variabler</guimenuitem></menuchoice> eller "
+"tryck <keycombo><keycap>Ctrl</keycap><keycap>G</keycap></keycombo>."
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:625
@@ -948,6 +1107,9 @@ msgid ""
 "format=\"PNG\"/> </imageobject> <textobject> <phrase>Global Variables "
 "Dialog</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/global-variables-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialog för globala "
+"variabler</phrase> </textobject>"
 
 #. (itstool) path: warning/para
 #: C/index.docbook:635
@@ -955,6 +1117,8 @@ msgid ""
 "For some programs (especially C++ programs), listing all of the global "
 "variables may take a very long time."
 msgstr ""
+"För vissa program (speciellt C++-program) kan listning av alla globala "
+"variabler ta väldigt lång tid."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:642
@@ -969,13 +1133,18 @@ msgid ""
 "first begin debugging a new executable. If you want to set additional "
 "breakpoints you can do one of the following:"
 msgstr ""
+"Det finns flera olika sätt att ställa in brytpunkter i Nemiver. Nemiver "
+"ställer automatiskt in en brytpunkt på <function>main()</function> när du "
+"börjar felsöka en ny körbar fil. Om du vill ställa in ytterligare "
+"brytpunkter kan du göra endera av följande:"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:651
 msgid ""
 "Click in the margin next to the line where you want the breakpoint to be set"
-msgstr ""
+msgstr "Klicka i marginalen intill raden där du vill ha en brytpunkt inställd"
 
+# sebras: commit 2668af2f4e552cd6b32d6e62fcdee75d70a06c3b makes Toggle Breakpoint at cursor non-translatable?! https://bugzilla.gnome.org/show_bug.cgi?id=766825
 #. (itstool) path: listitem/para
 #: C/index.docbook:655
 msgid ""
@@ -984,6 +1153,11 @@ msgid ""
 "guimenu><guimenuitem>Toggle Breakpoint at Cursor</guimenuitem></menuchoice>, "
 "or by pressing <keycap>F8</keycap>"
 msgstr ""
+"Placera din markör på en rad där du vill att en brytpunkt ska vara finnas "
+"och ställ in brytpunkten antingen genom att välja "
+"<menuchoice><guimenu>Felsök</guimenu><guimenuitem>Växla brytpunkt vid "
+"markör</guimenuitem></menuchoice> eller genom att trycka på <keycap>F8</"
+"keycap>"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:660
@@ -994,6 +1168,11 @@ msgid ""
 "<keycombo><keycap>Ctrl</keycap><keycap>B</keycap></keycombo>. This will "
 "bring up a dialog that looks like the following:"
 msgstr ""
+"Ställ in en brytpunkt vid ett specifikt funktionsnamn eller vid en specifik "
+"plats i en fil genom att välja <menuchoice><guimenu>Felsök</"
+"guimenu><guimenuitem>Ställ in brytpunkt…</guimenuitem></menuchoice> eller "
+"genom att trycka <keycombo><keycap>Ctrl</keycap><keycap>B</keycap></"
+"keycombo>. Detta kommer att visa en dialog som ser ut som följer:"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:665
@@ -1002,6 +1181,9 @@ msgid ""
 "format=\"PNG\"/> </imageobject> <textobject> <phrase>Set Breakpoint Dialog</"
 "phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/set-breakpoint-dialog.png\" "
+"format=\"PNG\"/> </imageobject> <textobject> <phrase>Dialog för att ställa "
+"in en brytpunkt</phrase> </textobject>"
 
 #. (itstool) path: listitem/para
 #: C/index.docbook:674
@@ -1011,11 +1193,15 @@ msgid ""
 "Nemiver will display a list of all matching functions and ask you to pick "
 "the one you want."
 msgstr ""
+"Du kan ange en brytpunkt vid en viss plats i en fil, eller efter "
+"funktionsnamn. Om det finns fler än en funktion med samma namn kommer "
+"Nemiver att visa en lista över alla matchade funktioner och be dig att välja "
+"den du vill ha."
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:683
 msgid "Disabled Breakpoints"
-msgstr ""
+msgstr "Inaktiverade brytpunkter"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:684
@@ -1025,6 +1211,10 @@ msgid ""
 "by any breakpoints in the disabled state. This allows you to temporarily "
 "remove a breakpoint without actually deleting it."
 msgstr ""
+"Brytpunkter kan antingen aktiveras eller inaktiveras. Felsökaren kommer att "
+"stanna exekveringen när den når en aktiverad brytpunkt men kommer inte att "
+"påverkas av brytpunkter som är i inaktiverat tillstånd. Detta låter dig "
+"tillfälligt ta bort en brytpunkt utan att faktiskt ta bort den."
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:690
@@ -1036,6 +1226,12 @@ msgid ""
 "to enable or disable a breakpoint that is set on the line that the cursor is "
 "currently on."
 msgstr ""
+"För att inaktivera eller aktivera en brytpunkt, klicka på kryssrutan intill "
+"brytpunktsnumret du vill aktivera eller inaktivera i fliken "
+"<interface>Brytpunkter</interface> i <interface>Statusanteckningsbok</"
+"interface>. Alternativt kan du trycka på <keycombo><keycap>Skift</"
+"keycap><keycap>F8</keycap></keycombo> för att aktivera eller inaktivera "
+"brytpunkter som ställs in på den aktuella rad som markören är på."
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:698
@@ -1043,13 +1239,13 @@ msgid ""
 "The following figures show the difference between enabled and disabled "
 "breakpoints in the source editor."
 msgstr ""
+"Följande figurer visar skillnaden mellan aktiverade och inaktiverade "
+"brytpunkter i källkodsredigeraren."
 
 #. (itstool) path: caption/para
 #: C/index.docbook:710
-#, fuzzy
-#| msgid "Breakpoints"
 msgid "Enabled Breakpoint"
-msgstr "Brytpunkter"
+msgstr "Aktiverade brytpunkter"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:703
@@ -1058,13 +1254,14 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of an enabled "
 "breakpoint</phrase> </textobject> <_:caption-1/>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/enabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration av en aktiverad "
+"brytpunkt</phrase> </textobject> <_:caption-1/>"
 
 #. (itstool) path: caption/para
 #: C/index.docbook:721
-#, fuzzy
-#| msgid "Breakpoints"
 msgid "Disabled Breakpoint"
-msgstr "Brytpunkter"
+msgstr "Inaktiverade brytpunkter"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:714
@@ -1073,6 +1270,9 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Illustration of a disabled "
 "breakpoint</phrase> </textobject> <_:caption-1/>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/disabled-breakpoint.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Illustration av en inaktiverad "
+"brytpunkt</phrase> </textobject> <_:caption-1/>"
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:726
@@ -1090,6 +1290,13 @@ msgid ""
 "<menuchoice><guimenu>File</guimenu><guimenuitem>Open Source File...</"
 "guimenuitem></menuchoice>, the following window should be displayed:"
 msgstr ""
+"Ibland kanske du inte exakt känner till funktionsnamnet eller radnumret där "
+"du vill ställa in en brytpunkt så du måste öppna en källkodsfil för att "
+"lista ut det. Du skulle kunna öppna godtyckliga filer från filsystemet men "
+"Nemiver kan också tillhandahålla en lista över källkodsfiler som användes "
+"för att bygga den körbara filen och låta dig välja från denna listan. När du "
+"väljer <menuchoice><guimenu>Arkiv</guimenu><guimenuitem>Öppna källkodsfil…</"
+"guimenuitem></menuchoice> bör följande fönster visas:"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:737
@@ -1098,6 +1305,9 @@ msgid ""
 "\"PNG\"/> </imageobject> <textobject> <phrase>Shows dialog for opening "
 "source files</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/open-files-target.png\" format="
+"\"PNG\"/> </imageobject> <textobject> <phrase>Visar dialog för att öppna "
+"källkodsfiler</phrase> </textobject>"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:746
@@ -1107,11 +1317,15 @@ msgid ""
 "produced the executable, choose <guilabel>Select from Target Executable</"
 "guilabel>."
 msgstr ""
+"För att välja en godtycklig fil från filsystemet, välj alternativet "
+"<guilabel>Välj från filsystem</guilabel>. För att välja från en lista av "
+"filer som producerat den körbara filen, välj <guilabel>Välj från körbar "
+"målfil</guilabel>."
 
 #. (itstool) path: warning/title
 #: C/index.docbook:753
 msgid "Determining Source Files for Dynamically Loaded Modules"
-msgstr ""
+msgstr "Att avgöra vilka källkodsfiler som utgör en dynamiskt inläst modul"
 
 #. (itstool) path: warning/para
 #: C/index.docbook:754
@@ -1120,11 +1334,14 @@ msgid ""
 "<function>dlopen()</function>), Nemiver will not be able to determine which "
 "files were used to build these modules until they are actually loaded."
 msgstr ""
+"Om den körbara målfilen läser in moduler i körtid (t.ex. via "
+"<function>dlopen()</function>) kommer Nemiver inte att kunna avgöra vilka "
+"filer som använts för att bygga dessa moduler förrän de faktiskt lästs in."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:764
 msgid "Advanced Debugging"
-msgstr ""
+msgstr "Avancerad felsökning"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:767
@@ -1134,6 +1351,10 @@ msgid ""
 "you can press <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> "
 "to jump directly to the correct tab."
 msgstr ""
+"Komponenten för registerredigering finns i fliken <interface>Register</"
+"interface> i <interface>Statusanteckningsboken</interface>. Alternativt kan "
+"du trycka <keycombo><keycap>Alt</keycap><keycap>F5</keycap></keycombo> för "
+"att direkt hoppa till rätt flik."
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:775
@@ -1142,6 +1363,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>The Register Editing Widget</"
 "phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/registers-view.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Komponenten för registerredigering</"
+"phrase> </textobject>"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:784
@@ -1151,6 +1375,10 @@ msgid ""
 "column and entering a new value. If the value for the register changed since "
 "the last time the debugger stopped, it will be highlighted in red."
 msgstr ""
+"Denna komponent visar aktuella värden för alla CPU-register. Du kan redigera "
+"registervärden genom att klicka i kolumnen <interface>Värde</interface> och "
+"mata in ett nytt värde. Om värde för register ändrats sedan senaste gången "
+"felsökaren stannade kommer det att färgmarkeras i rött."
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:794
@@ -1159,6 +1387,8 @@ msgid ""
 "enables you to get a lower-level view of what's happening while your program "
 "is running."
 msgstr ""
+"Minneskomponenten låter dig direkt visa ett område av minne. Detta låter dig "
+"komma ner till en lägre nivå kring vad som händer när ditt program kör."
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:800
@@ -1167,6 +1397,9 @@ msgid ""
 "> </imageobject> <textobject> <phrase>The Memory Editing Widget</phrase> </"
 "textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/memory-view.png\" format=\"PNG\"/"
+"> </imageobject> <textobject> <phrase>Komponenten för minnesredigering</"
+"phrase> </textobject>"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:809
@@ -1180,6 +1413,13 @@ msgid ""
 "The memory values will automatically be updated as you step through the "
 "program."
 msgstr ""
+"För att visa ett område av minne i komponenten för minnesvisning, mata in en "
+"minnesadress i fältet <interface>Adress</interface>. Om adressen är giltig "
+"för programmet som felsöks kommer minnesvyn att visa minnesvärden som börjar "
+"på den angivna adressen. Minnesvärde kan visas i byte-, (2 byte) ord- eller "
+"(4 byte) långordsformat genom att välja ett alternativ från rullgardinsmenyn "
+"<interface>Gruppera efter</interface>. Minnesvärdena kommer automatiskt att "
+"uppdateras allt eftersom du stegar genom programmet."
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:820
@@ -1190,11 +1430,16 @@ msgid ""
 "(the right-hand section of the memory widget). All changes will be applied "
 "immediately."
 msgstr ""
+"Förutom att visa minnesvärde kan du också använda komponenten för minnet för "
+"att modifiera minnesvärden. Du kan redigera antingen den hexadecimala byte-"
+"representationen (den vänstra delen av komponenten för minnet) eller ASCII-"
+"representationen (den högra delen av komponenten för minnet). Alla ändringar "
+"kommer att tillämpas omedelbart."
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:831
 msgid "Session Save and Restore"
-msgstr ""
+msgstr "Spara och återuppta sessioner"
 
 #. (itstool) path: sect1/para
 #: C/index.docbook:832
@@ -1206,6 +1451,12 @@ msgid ""
 "breakpoints are set so that you can get back to where you left off last time "
 "as quickly as possible."
 msgstr ""
+"Nemiver kan spara dina felsökningssessioner åt dig så att du kan återuppta "
+"dem vid ett senare tillfälle. Detta inkluderar att spara information så som "
+"vilken körbar fil som felsöks, vilka miljövariabler som är inställda och "
+"vilka kommandoradsflaggor som angetts till den körbara filen, vilka filer "
+"som är öppna och vilka brytpunkter som är inställda så att du kan gå "
+"tillbaka till där du senast lämnade så snabbt som möjligt."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:841
@@ -1221,11 +1472,16 @@ msgid ""
 "<menuchoice><guimenu>File</guimenu><guimenuitem>Save Session To Disk</"
 "guimenuitem></menuchoice>."
 msgstr ""
+"Nemiver kommer att spara din session automatiskt vid avslut så du behöver "
+"inte ens bry dig om det. Om du däremot uttryckligen vill spara sessioner "
+"innan du stänger Nemiver kan du göra det genom att välja "
+"<menuchoice><guimenu>Arkiv</guimenu><guimenuitem>Spara session till disk</"
+"guimenuitem></menuchoice>."
 
 #. (itstool) path: sect2/title
 #: C/index.docbook:850
 msgid "Resuming Saved Sessions"
-msgstr ""
+msgstr "Återuppta sparade sessioner"
 
 #. (itstool) path: sect3/para
 #: C/index.docbook:853
@@ -1233,11 +1489,13 @@ msgid ""
 "Select <menuchoice><guimenu>File</guimenu><guimenuitem>Resume Saved "
 "Session...</guimenuitem></menuchoice> and select a session from the list."
 msgstr ""
+"Välj <menuchoice><guimenu>Arkiv</guimenu><guimenuitem>Återuppta sparad "
+"session…</guimenuitem></menuchoice> och välj en session från listan."
 
 #. (itstool) path: figure/title
 #: C/index.docbook:859
 msgid "Session Dialog"
-msgstr ""
+msgstr "Sessionsdialogen"
 
 #. (itstool) path: screenshot/mediaobject
 #: C/index.docbook:861
@@ -1246,6 +1504,9 @@ msgid ""
 "\"/> </imageobject> <textobject> <phrase>Shows dialog for resuming a saved "
 "session</phrase> </textobject>"
 msgstr ""
+"<imageobject> <imagedata fileref=\"figures/sessions-dialog.png\" format=\"PNG"
+"\"/> </imageobject> <textobject> <phrase>Visar dialogen för återupptagning "
+"av en sparad session</phrase> </textobject>"
 
 #. (itstool) path: sect3/title
 #: C/index.docbook:873
@@ -1260,6 +1521,10 @@ msgid ""
 "run session number 3, you can do so with the following command: "
 "<command>nemiver --session 3</command>."
 msgstr ""
+"Om du vet vilket sessions-ID sessionen du vill köra har kan du inleda "
+"felsökningssessionen från kommandoraden. Om du till exempel vill köra "
+"session nummer 3 kan du göra det genom följande kommando: <command>nemiver --"
+"session 3</command>."
 
 #. (itstool) path: sect1/title
 #: C/index.docbook:886
@@ -1274,7 +1539,12 @@ msgid ""
 "information about Nemiver, please visit the <ulink url=\"http://www.gnome."
 "org/projects/nemiver/\" type=\"http\">Nemiver project website</ulink>."
 msgstr ""
+"<application>Nemiver</application> skrevs av Dodji Seketeli och Jonathon "
+"Jongsma, med bidrag från många fler. För att hitta mer information om "
+"Nemiver, besök <ulink url=\"http://www.gnome.org/projects/nemiver/\" type="
+"\"http\">projektwebbplatsen för Nemiver</ulink>."
 
+# sebras: is the link destination still there?
 #. (itstool) path: sect1/para
 #: C/index.docbook:891
 msgid ""
@@ -1282,6 +1552,9 @@ msgid ""
 "manual, see the Feedback section of the <ulink url=\"ghelp:user-guide?"
 "feedback-bugs\" type=\"help\">GNOME User Guide</ulink>."
 msgstr ""
+"För att rapportera ett fel eller lämna ett förslag kring detta program eller "
+"denna manual, se avsnittet Återkoppling i <ulink url=\"ghelp:user-guide?"
+"feedback-bugs\" type=\"help\">användarguiden för GNOME</ulink>."
 
 #. (itstool) path: sect1/para
 #: C/index.docbook:896
@@ -1292,11 +1565,16 @@ msgid ""
 "can be found at this <ulink url=\"ghelp:gpl\" type=\"help\">link</ulink>, or "
 "in the file COPYING included with the source code of this program."
 msgstr ""
+"Det här programmet distribueras under villkoren för GNU General Public "
+"License så som publicerats av Free Software Foundation; antingen version 2 "
+"av licensen, eller (om du så vill) någon senare version. En kopia av den här "
+"licensen kan hittas på <ulink url=\"ghelp:gpl\" type=\"help\">länk</ulink>, "
+"eller i filen COPYING som inkluderats i källkoden för det här programmet."
 
 #. (itstool) path: para/ulink
 #: C/legal.xml:9
 msgid "link"
-msgstr ""
+msgstr "länk"
 
 #. (itstool) path: legalnotice/para
 #: C/legal.xml:2
@@ -1308,6 +1586,11 @@ msgid ""
 "of the GFDL at this <_:ulink-1/> or in the file COPYING-DOCS distributed "
 "with this manual."
 msgstr ""
+"Tillstånd att kopiera, distribuera och/eller modifiera detta dokument ges "
+"under villkoren i GNU Free Documentation License (GFDL), version 1.1 eller "
+"senare, utgivet av Free Software Foundation utan standardavsnitt och "
+"omslagstexter.  En kopia av GFDL finns att hämta på denna <_:ulink-1/> eller "
+"i filen COPYING-DOCS som medföljer denna handbok."
 
 #. (itstool) path: legalnotice/para
 #: C/legal.xml:12
@@ -1317,6 +1600,10 @@ msgid ""
 "you can do so by adding a copy of the license to the manual, as described in "
 "section 6 of the license."
 msgstr ""
+"Denna handbok utgör en av flera GNOME-handböcker som distribueras under "
+"villkoren i GFDL.  Om du vill distribuera denna handbok separat från övriga "
+"handböcker kan du göra detta genom att lägga till en kopia av licensavtalet "
+"i handboken enligt instruktionerna i avsnitt 6 i licensavtalet."
 
 #. (itstool) path: legalnotice/para
 #: C/legal.xml:19
@@ -1327,6 +1614,10 @@ msgid ""
 "aware of those trademarks, then the names are in capital letters or initial "
 "capital letters."
 msgstr ""
+"Flera namn på produkter och tjänster är registrerade varumärken. I de fall "
+"dessa namn förekommer i GNOME-dokumentation - och medlemmarna i GNOME-"
+"dokumentationsprojektet är medvetna om dessa varumärken - är de skrivna med "
+"versaler eller med inledande versal."
 
 #. (itstool) path: listitem/para
 #: C/legal.xml:35
@@ -1353,6 +1644,31 @@ msgid ""
 "VERSIONS OF THE DOCUMENT, EVEN IF SUCH PARTY SHALL HAVE BEEN INFORMED OF THE "
 "POSSIBILITY OF SUCH DAMAGES."
 msgstr ""
+"DOKUMENTET TILLHANDAHÅLLS I \"BEFINTLIGT SKICK\" UTAN NÅGRA SOM HELST "
+"GARANTIER, VARE SIG UTTRYCKLIGA ELLER UNDERFÖRSTÅDDA, INKLUSIVE, MEN INTE "
+"BEGRÄNSAT TILL, GARANTIER ATT DOKUMENTET ELLER EN MODIFIERAD VERSION AV "
+"DOKUMENTET INTE INNEHÅLLER NÅGRA FELAKTIGHETER, ÄR LÄMPLIGT FÖR ETT VISST "
+"ÄNDAMÅL ELLER INTE STRIDER MOT LAG. HELA RISKEN VAD GÄLLER KVALITET, "
+"EXAKTHET OCH UTFÖRANDE AV DOKUMENTET OCH MODIFIERADE VERSIONER AV DOKUMENTET "
+"LIGGER HELT OCH HÅLLET PÅ ANVÄNDAREN. OM ETT DOKUMENT ELLER EN MODIFIERAD "
+"VERSION AV ETT DOKUMENT SKULLE VISA SIG INNEHÅLLA FELAKTIGHETER I NÅGOT "
+"HÄNSEENDE ÄR DET DU (INTE DEN URSPRUNGLIGA SKRIBENTEN, FÖRFATTAREN ELLER "
+"NÅGON ANNAN MEDARBETARE) SOM FÅR STÅ FÖR ALLA EVENTUELLA KOSTNADER FÖR "
+"SERVICE, REPARATIONER ELLER KORRIGERINGAR. DENNA GARANTIFRISKRIVNING UTGÖR "
+"EN VÄSENTLIG DEL AV DETTA LICENSAVTAL. DETTA INNEBÄR ATT ALL ANVÄNDNING AV "
+"ETT DOKUMENT ELLER EN MODIFIERAD VERSION AV ETT DOKUMENT BEVILJAS ENDAST "
+"UNDER DENNA ANSVARSFRISKRIVNING; UNDER INGA OMSTÄNDIGHETER ELLER INOM RAMEN "
+"FÖR NÅGON LAGSTIFTNING, OAVSETT OM DET GÄLLER KRÄNKNING (INKLUSIVE "
+"VÅRDSLÖSHET), KONTRAKT ELLER DYLIKT, SKA FÖRFATTAREN, DEN URSPRUNGLIGA "
+"SKRIBENTEN ELLER ANNAN MEDARBETARE ELLER ÅTERFÖRSÄLJARE AV DOKUMENTET ELLER "
+"AV EN MODIFIERAD VERSION AV DOKUMENTET ELLER NÅGON LEVERANTÖR TILL NÅGON AV "
+"NÄMNDA PARTER STÄLLAS ANSVARIG GENTEMOT NÅGON FÖR NÅGRA DIREKTA, INDIREKTA, "
+"SÄRSKILDA ELLER OFÖRUTSEDDA SKADOR ELLER FÖLJDSKADOR AV NÅGOT SLAG, "
+"INKLUSIVE, MEN INTE BEGRÄNSAT TILL, SKADOR BETRÄFFANDE FÖRLORAD GOODWILL, "
+"HINDER I ARBETET, DATORHAVERI ELLER NÅGRA ANDRA TÄNKBARA SKADOR ELLER "
+"FÖRLUSTER SOM KAN UPPKOMMA PÅ GRUND AV ELLER RELATERAT TILL ANVÄNDNINGEN AV "
+"DOKUMENTET ELLER MODIFIERADE VERSIONER AV DOKUMENTET, ÄVEN OM PART SKA HA "
+"BLIVIT INFORMERAD OM MÖJLIGHETEN TILL SÅDANA SKADOR."
 
 #. (itstool) path: legalnotice/para
 #: C/legal.xml:28
@@ -1361,3 +1677,6 @@ msgid ""
 "OF THE GNU FREE DOCUMENTATION LICENSE WITH THE FURTHER UNDERSTANDING THAT: "
 "<_:orderedlist-1/>"
 msgstr ""
+"DOKUMENTET OCH MODIFIERADE VERSIONER AV DOKUMENTET TILLHANDAHÅLLS UNDER "
+"VILLKOREN I GNU FREE DOCUMENTATION LICENSE ENDAST UNDER FÖLJANDE "
+"FÖRUTSÄTTNINGAR: <_:orderedlist-1/>"
