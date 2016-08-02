@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: nemiver.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-12-09 08:08+0000\n"
+"POT-Creation-Date: 2016-07-24 22:41+0000\n"
 "PO-Revision-Date: 2015-12-14 16:38+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
@@ -23,7 +23,16 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 2.91.6\n"
 
-#: ../data/nemiver.appdata.xml.in.h:1
+#: ../data/nemiver.appdata.xml.in.h:1 ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.appdata.xml.in.h:2 ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Depurar aplicaciones"
+
+#: ../data/nemiver.appdata.xml.in.h:3
 msgid ""
 "Nemiver is an on-going effort to write a standalone graphical debugger that "
 "integrates well in the GNOME desktop environment. It currently features a "
@@ -34,17 +43,13 @@ msgstr ""
 "un «backend» que usa el conocido depurador de GNU gdb para depurar programas "
 "de C/C++."
 
-#: ../data/nemiver.appdata.xml.in.h:2
+#: ../data/nemiver.appdata.xml.in.h:4
 msgid ""
 "We believe that Nemiver is mature and robust enough to just let you debug "
 "your favorite C or C++ application in a pleasant way."
 msgstr ""
 "Creemos que Nemiver es lo suficientemente robusto y maduro para permitirle "
 "depurar su aplicación en C/C++ favorita cómodamente."
-
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
-msgid "Nemiver"
-msgstr "Nemiver"
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
@@ -53,10 +58,6 @@ msgstr "Depurador de C/C++"
 #: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Depurador de C/C++ Nemiver"
-
-#: ../data/nemiver.desktop.in.h:4
-msgid "Debug Applications"
-msgstr "Depurar aplicaciones"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
@@ -267,8 +268,6 @@ msgstr "Binario"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:767
 #, c-format
-#| msgid "(Click here to see the next %d row of the call stack"
-#| msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgid "(Click here to see the next %d row of the call stack)"
 msgid_plural "(Click here to see the next %d rows of the call stack)"
 msgstr[0] "(Pulse aquí para ver la siguiente %d fila de la pila de llamadas)"
@@ -1084,7 +1083,7 @@ msgstr "Seleccionar el ejecutable que creó el archivo core"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
 msgid "Executable:"
-msgstr "Ejecutable:<"
+msgstr "Ejecutable:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
@@ -1620,7 +1619,7 @@ msgstr "Encontrar archivo<"
 #~ "Please add the encoding of that file to the values of the gconf key, and "
 #~ "resume debugging"
 #~ msgstr ""
-#~ "El archivo %s tiene una codificación que no está listada en el el valor "
+#~ "El archivo %s tiene una codificación que no está listada en elvalor "
 #~ "de la clave de GConf %s. Añada la codificación del archivo a los valores "
 #~ "de la clave de GConf y reanude la depuración."
 
