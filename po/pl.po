@@ -1,29 +1,34 @@
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# Aviary.pl
-# Jeśli masz jakiekolwiek uwagi odnoszące się do tłumaczenia lub chcesz
-# pomóc w jego rozwijaniu i pielęgnowaniu, napisz do nas:
-# gnomepl@aviary.pl
-# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-# Piotr Drąg <piotrdrag@gmail.com>, 2012-2015.
-# Aviary.pl <gnomepl@aviary.pl>, 2012-2015.
+# Polish translation for nemiver.
+# Copyright © 2012-2016 the nemiver authors.
+# This file is distributed under the same license as the nemiver package.
+# Piotr Drąg <piotrdrag@gmail.com>, 2012-2016.
+# Aviary.pl <community-poland@mozilla.org>, 2012-2016.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-09 18:14+0100\n"
-"PO-Revision-Date: 2015-12-09 18:15+0100\n"
+"POT-Creation-Date: 2016-08-22 23:24+0200\n"
+"PO-Revision-Date: 2016-08-22 23:25+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
-"Language-Team: Polish <gnomepl@aviary.pl>\n"
+"Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
-"X-Poedit-Language: Polish\n"
-"X-Poedit-Country: Poland\n"
 
-#: ../data/nemiver.appdata.xml.in.h:1
+#: ../data/nemiver.appdata.xml.in.h:1 ../data/nemiver.desktop.in.h:1
+#: ../ui/workbench.ui.h:1
+msgid "Nemiver"
+msgstr "Nemiver"
+
+#: ../data/nemiver.appdata.xml.in.h:2 ../data/nemiver.desktop.in.h:4
+msgid "Debug Applications"
+msgstr "Debugowanie programów"
+
+#: ../data/nemiver.appdata.xml.in.h:3
 msgid ""
 "Nemiver is an on-going effort to write a standalone graphical debugger that "
 "integrates well in the GNOME desktop environment. It currently features a "
@@ -31,20 +36,16 @@ msgid ""
 msgstr ""
 "Nemiver jest próbą napisania samodzielnego graficznego debugera, który "
 "będzie dobrze integrował się ze środowiskiem GNOME. Obecnie używa on znanego "
-"debugera projektu GNU (GDB) do debugowania programów napisanych w językach C/"
+"debugera projektu GNU (GDB) do debugowania programów napisanych w językach C/"
 "C++."
 
-#: ../data/nemiver.appdata.xml.in.h:2
+#: ../data/nemiver.appdata.xml.in.h:4
 msgid ""
 "We believe that Nemiver is mature and robust enough to just let you debug "
 "your favorite C or C++ application in a pleasant way."
 msgstr ""
 "Jako jego twórcy wierzymy, że jest program Nemiver jest dojrzały na tyle, "
-"aby umożliwiać debugowanie programów C lub C++ w przyjemny sposób."
-
-#: ../data/nemiver.desktop.in.h:1 ../ui/workbench.ui.h:1
-msgid "Nemiver"
-msgstr "Nemiver"
+"aby umożliwiać debugowanie programów C lub C++ w przyjemny sposób."
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
@@ -53,10 +54,6 @@ msgstr "Debuger języka C/C++"
 #: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
 msgstr "Debuger języka C/C++ Nemiver"
-
-#: ../data/nemiver.desktop.in.h:4
-msgid "Debug Applications"
-msgstr "Debugowanie programów"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
@@ -84,7 +81,7 @@ msgstr "Czyści zapisane sesje debugowania"
 
 #: ../src/main.cc:120
 msgid "Debug the program that was of session number N"
-msgstr "Debuguje program w sesji numer N"
+msgstr "Debuguje program w sesji numer N"
 
 #: ../src/main.cc:128
 msgid "Execute the last session"
@@ -92,11 +89,11 @@ msgstr "Wykonuje ostatnią sesję"
 
 #: ../src/main.cc:136
 msgid "Enable logging domains DOMAINS"
-msgstr "Włącza zapisywanie DOMEN w dzienniku"
+msgstr "Włącza zapisywanie DOMEN w dzienniku"
 
 #: ../src/main.cc:144
 msgid "Log the debugger output"
-msgstr "Zapisuje w dzienniku wyjście debugera"
+msgstr "Zapisuje w dzienniku wyjście debugera"
 
 #: ../src/main.cc:152
 msgid "Use this terminal as the debugee's terminal"
@@ -112,7 +109,7 @@ msgid ""
 "conjunction with --remote"
 msgstr ""
 "Gdzie wyszukiwać bibliotek współdzielonych wczytanych przez debuger niższego "
-"poziomu. Należy używać w połączeniu z opcją --remote"
+"poziomu. Należy używać w połączeniu z opcją --remote"
 
 #: ../src/main.cc:180
 msgid "Set the path of the GDB binary to use to debug the inferior"
@@ -123,7 +120,7 @@ msgstr ""
 #: ../src/main.cc:189
 msgid "Do not set a breakpoint in 'main' and do not run the inferior either"
 msgstr ""
-"Bez ustawiania punktu przerwania w „main” i wykonywania debugera niższego "
+"Bez ustawiania punktu przerwania w „main” i wykonywania debugera niższego "
 "poziomu"
 
 #: ../src/main.cc:198
@@ -145,7 +142,7 @@ msgid ""
 msgstr ""
 "Proszę podać lokalną kopię pliku binarnego, który ma zostać zdalnie "
 "debugowany.\n"
-"W ten sposób:\n"
+"W ten sposób:\n"
 
 #: ../src/main.cc:366 ../src/main.cc:385
 msgid "Otherwise, find below the full set of Nemiver options.\n"
@@ -157,7 +154,7 @@ msgid ""
 "Like this:\n"
 msgstr ""
 "Proszę podać także ścieżkę do pliku binarnego, który utworzył plik core.\n"
-"W ten sposób:\n"
+"W ten sposób:\n"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:148
@@ -241,7 +238,7 @@ msgstr "_Przejdź do źródła"
 
 #: ../src/persp/dbgperspective/nmv-breakpoints-view.cc:452
 msgid "Find this breakpoint in the source editor"
-msgstr "Wyszukuje ten punkt przerwania w edytorze źródłowym"
+msgstr "Wyszukuje ten punkt przerwania w edytorze źródłowym"
 
 #: ../src/persp/dbgperspective/nmv-call-stack.cc:177
 #: ../src/uicommon/nmv-terminal.cc:184
@@ -382,7 +379,7 @@ msgstr "_Odłącz od uruchomionego programu"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Disconnect the debugger from the running target without killing it"
-msgstr "Rozłącza debugera z uruchomionego celu bez jego kończenia"
+msgstr "Rozłącza debugera z uruchomionego celu bez jego kończenia"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
 msgid "_Save Session to Disk"
@@ -406,7 +403,7 @@ msgstr "Ustaw punkt przerwania za pomocą okna dialogowego…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
 msgid "Set a breakpoint at the current line using a dialog"
-msgstr "Ustawia punkt przerwania w bieżącym wierszu używając okna dialogowego"
+msgstr "Ustawia punkt przerwania w bieżącym wierszu używając okna dialogowego"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
 msgid "Set Breakpoint..."
@@ -429,7 +426,7 @@ msgstr "Przełącz p_unkt przerwania"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3241
 msgid "Set/Unset a breakpoint at the current cursor location"
-msgstr "Ustawia/usuwa punkt przerwania w bieżącym położeniu kursora"
+msgstr "Ustawia/usuwa punkt przerwania w bieżącym położeniu kursora"
 
 #. Depending on the context we will want this string to be
 #. either "Enable Breakpoint", or "Disable
@@ -446,7 +443,7 @@ msgstr "Włącz/wyłącz punkt przerwania"
 msgid ""
 "Enable or disable the breakpoint that is set at the current cursor location"
 msgstr ""
-"Włącza lub wyłącza punkt przerwania ustawiony w bieżącym położeniu kursora"
+"Włącza lub wyłącza punkt przerwania ustawiony w bieżącym położeniu kursora"
 
 #. Depending on the context we will want this string to be
 #. either "Set Countpoint", or "Change to Countpoint", or
@@ -462,7 +459,7 @@ msgstr "Przełącz punkt _licznika"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3280
 msgid "Set/Unset a countpoint at the current cursor location"
-msgstr "Ustawia/usuwa punkt licznika w bieżącym położeniu kursora"
+msgstr "Ustawia/usuwa punkt licznika w bieżącym położeniu kursora"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3290
 msgid "Set Watchpoint with Dialog..."
@@ -543,12 +540,12 @@ msgstr "Przechodzi do obecnie zaznaczonego wiersza"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3388
 msgid "Jump and Stop to Cursor"
-msgstr "Przejdź i zatrzymaj na kursorze"
+msgstr "Przejdź i zatrzymaj na kursorze"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3389
 msgid "Sets a breakpoint to the currently selected line and jump there"
 msgstr ""
-"Ustawia punkt przerwania w obecnie zaznaczonym wierszu i przechodzi do niego"
+"Ustawia punkt przerwania w obecnie zaznaczonym wierszu i przechodzi do niego"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3401
 msgid "Jump to a Given Location"
@@ -574,7 +571,7 @@ msgstr "Wywołaj funkcję"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3425
 msgid "Call a function in the program being debugged"
-msgstr "Wywołuje funkcję w debugowanym programie"
+msgstr "Wywołuje funkcję w debugowanym programie"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3434
 msgid "Show Global Variables"
@@ -601,7 +598,7 @@ msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr ""
-"Wyświetla kod asemblera obecnie debugowanego kodu źródłowego w kolejnej "
+"Wyświetla kod asemblera obecnie debugowanego kodu źródłowego w kolejnej "
 "karcie"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
@@ -682,7 +679,7 @@ msgstr "_Wczytaj plik core…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3615
 msgid "Load a core file from disk"
-msgstr "Wczytuje plik core z dysku"
+msgstr "Wczytuje plik core z dysku"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3625
 msgid "_Attach to Running Program..."
@@ -698,7 +695,7 @@ msgstr "Połącz ze zdalnym _celem…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
-msgstr "Łączy z serwerem debugowania, aby debugować zdalny cel"
+msgstr "Łączy z serwerem debugowania, aby debugować zdalny cel"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
@@ -722,7 +719,7 @@ msgstr "S_kopiuj zaznaczony tekst"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
 msgid "Copy the text selected in the current source file"
-msgstr "Kopiuje tekst zaznaczony w bieżącym pliku źródłowym"
+msgstr "Kopiuje tekst zaznaczony w bieżącym pliku źródłowym"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
 msgid "_Reload Source File"
@@ -746,7 +743,7 @@ msgstr "_Znajdź"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
 msgid "Find a text string in file"
-msgstr "Wyszukuje ciąg tekstowy w pliku"
+msgstr "Wyszukuje ciąg tekstowy w pliku"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
 #, c-format
@@ -821,7 +818,7 @@ msgstr "Dwa panele stanu"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
 msgid "A layout with two status pane"
-msgstr "Układ z dwoma panelami stanu"
+msgstr "Układ z dwoma panelami stanu"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
 msgid "Wide Layout"
@@ -986,7 +983,7 @@ msgstr "Zmienna"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
-msgstr "Wyrażenia w zakresie"
+msgstr "Wyrażenia w zakresie"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
 msgid "Out of scope expressions"
@@ -998,7 +995,7 @@ msgstr "Usuń"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
 msgid "Remove selected expressions from the monitor"
-msgstr "Usuwa zaznaczone wyrażenia z monitora"
+msgstr "Usuwa zaznaczone wyrażenia z monitora"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
 msgid "New..."
@@ -1025,7 +1022,7 @@ msgstr "Wybór przeładowanej funkcji"
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
-msgstr "Wiele funkcji pasuje do podanej nazwy. Proszę wybrać jedną z listy."
+msgstr "Wiele funkcji pasuje do podanej nazwy. Proszę wybrać jedną z listy."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
@@ -1041,7 +1038,7 @@ msgstr "Opcje dopasowania:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
-msgstr "_Rozróżnianie małych i wielkich liter"
+msgstr "_Rozróżnianie małych i wielkich liter"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
 msgid "Match _entire word only"
@@ -1089,11 +1086,11 @@ msgstr "Otwarcie plików źródłowych"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
-msgstr "Wybierz z _docelowego pliku wykonywalnego"
+msgstr "Wybierz z _docelowego pliku wykonywalnego"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
-msgstr "Wybierz z _systemu plików"
+msgstr "Wybierz z _systemu plików"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
 msgid "Choose Source Files to Open"
@@ -1105,11 +1102,11 @@ msgstr "Preferencje"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "Use system monospace font"
-msgstr "Użycie systemowej czcionki o stałej szerokości"
+msgstr "Systemowa czcionka o stałej szerokości"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "Custom Font:"
-msgstr "Własna czcionka:"
+msgstr "Niestandardowa czcionka:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "Editor Font"
@@ -1129,7 +1126,7 @@ msgstr "Numery wierszy"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
-msgstr "Użycie terminala, z którego uruchomiono"
+msgstr "Użycie terminala, z którego uruchomiono"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "Terminal"
@@ -1181,7 +1178,7 @@ msgstr "Czysty kod asemblera"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
-msgstr "Mieszany kod źródłowy i asemblera"
+msgstr "Mieszany kod źródłowy i asemblera"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Assembly style"
@@ -1475,8 +1472,8 @@ msgstr "Witryna projektu"
 #: ../src/workbench/nmv-workbench.cc:283
 msgid "translator-credits"
 msgstr ""
-"Piotr Drąg <piotrdrag@gmail.com>, 2012-2015\n"
-"Aviary.pl <gnomepl@aviary.pl>, 2012-2015"
+"Piotr Drąg <piotrdrag@gmail.com>, 2012-2016\n"
+"Aviary.pl <community-poland@mozilla.org>, 2012-2016"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
@@ -1500,11 +1497,11 @@ msgstr "Pomo_c"
 
 #: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
-msgstr "_O programie"
+msgstr "_O programie"
 
 #: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
-msgstr "Wyświetla informacje o tym programie"
+msgstr "Wyświetla informacje o tym programie"
 
 #: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
