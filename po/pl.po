@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: nemiver\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-22 23:24+0200\n"
-"PO-Revision-Date: 2016-08-22 23:25+0200\n"
+"POT-Creation-Date: 2016-09-10 00:04+0200\n"
+"PO-Revision-Date: 2016-09-10 00:02+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -34,30 +34,29 @@ msgid ""
 "integrates well in the GNOME desktop environment. It currently features a "
 "backend which uses the well known GNU Debugger gdb to debug C / C++ programs."
 msgstr ""
-"Nemiver jest próbą napisania samodzielnego graficznego debugera, który "
-"będzie dobrze integrował się ze środowiskiem GNOME. Obecnie używa on znanego "
-"debugera projektu GNU (GDB) do debugowania programów napisanych w językach C/"
-"C++."
+"Nemiver jest samodzielnym graficznym debugerem, który dobrze integruje się "
+"ze środowiskiem GNOME. Obecnie używa on znanego debugera projektu GNU (GDB) "
+"do debugowania programów napisanych w języku C i C++."
 
 #: ../data/nemiver.appdata.xml.in.h:4
 msgid ""
 "We believe that Nemiver is mature and robust enough to just let you debug "
 "your favorite C or C++ application in a pleasant way."
 msgstr ""
-"Jako jego twórcy wierzymy, że jest program Nemiver jest dojrzały na tyle, "
-"aby umożliwiać debugowanie programów C lub C++ w przyjemny sposób."
+"Jako jego twórcy wierzymy, że program Nemiver jest dojrzały na tyle, aby "
+"umożliwiać debugowanie programów C i C++ w przyjemny sposób."
 
 #: ../data/nemiver.desktop.in.h:2
 msgid "C/C++ Debugger"
-msgstr "Debuger języka C/C++"
+msgstr "Debuger języka C i C++"
 
 #: ../data/nemiver.desktop.in.h:3
 msgid "Nemiver C/C++ Debugger"
-msgstr "Debuger języka C/C++ Nemiver"
+msgstr "Debuger języka C i C++ Nemiver"
 
 #: ../data/nemiver.desktop.in.h:5
 msgid "gdb;disassembler;debugger;c;c++;"
-msgstr "gdb;deasembler;disassembler;debuger;debugger;c;c++;plus;"
+msgstr "gdb;deasembler;disassembler;debuger;debugger;c;c++;cpp;plus;"
 
 #: ../src/main.cc:78
 msgid "Set the environment of the program to debug"
@@ -133,7 +132,7 @@ msgstr " [<program-do-debugowania> [parametry-programu]]"
 
 #: ../src/main.cc:267 ../src/workbench/nmv-workbench.cc:251
 msgid "A C/C++ debugger for GNOME"
-msgstr "Debuger języka C/C++ dla środowiska GNOME"
+msgstr "Debuger języka C i C++ dla środowiska GNOME"
 
 #: ../src/main.cc:361
 msgid ""
@@ -343,7 +342,7 @@ msgstr "Ustaw punkt licznika"
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2281
 #, c-format
 msgid "%s (path=\"%s\", pid=%i)"
-msgstr "%s (ścieżka=„%s”, PID=%i)"
+msgstr "%s (ścieżka=\"%s\", PID=%i)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
 msgid "Connected to remote target!"
@@ -403,7 +402,7 @@ msgstr "Ustaw punkt przerwania za pomocą okna dialogowego…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3212
 msgid "Set a breakpoint at the current line using a dialog"
-msgstr "Ustawia punkt przerwania w bieżącym wierszu używając okna dialogowego"
+msgstr "Ustawia punkt przerwania w bieżącym wierszu za pomocą okna dialogowego"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3223
 msgid "Set Breakpoint..."
@@ -467,7 +466,7 @@ msgstr "Ustaw punkt obserwacji za pomocą okna dialogowego…"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3291
 msgid "Set a watchpoint using a dialog"
-msgstr "Ustawia punkt obserwacji używając okna dialogowego"
+msgstr "Ustawia punkt obserwacji za pomocą okna dialogowego"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3306
 msgid "_Next"
