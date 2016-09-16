@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-09 22:05+0000\n"
-"PO-Revision-Date: 2016-09-16 12:31+0200\n"
+"PO-Revision-Date: 2016-09-16 12:58+0200\n"
 "Language-Team: Friulian <fur@li.org>\n"
 "Language: fur\n"
 "MIME-Version: 1.0\n"
@@ -913,69 +913,69 @@ msgstr "Mostre"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
-msgstr ""
+msgstr "Met dongje par:"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:153
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:5
 msgid "Choose a Directory"
-msgstr ""
+msgstr "Sielç une cartele"
 
 #: ../src/persp/dbgperspective/nmv-preferences-dialog.cc:284
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:18
 msgid "Source Directories"
-msgstr ""
+msgstr "Cartele sorzints"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:132
 msgid "User Name"
-msgstr ""
+msgstr "Non utent"
 
 #: ../src/persp/dbgperspective/nmv-proc-list-dialog.cc:139
 msgid "Proc Args"
-msgstr ""
+msgstr "Param proc"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:101
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:99
 msgid "Name"
-msgstr ""
+msgstr "Non"
 
 #: ../src/persp/dbgperspective/nmv-registers-view.cc:102
 #: ../src/persp/dbgperspective/nmv-run-program-dialog.cc:102
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:59
 msgid "Value"
-msgstr ""
+msgstr "Valôr"
 
 #: ../src/persp/dbgperspective/nmv-saved-sessions-dialog.cc:71
 msgid "Session"
-msgstr ""
+msgstr "Session"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:117
 msgid "Throw Exception"
-msgstr ""
+msgstr "Trai ecezion"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:121
 msgid "Catch Exception"
-msgstr ""
+msgstr "Cature ecezion"
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:125
 msgid "Fork System Call"
-msgstr ""
+msgstr "Clamade di sisteme \"fork\""
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:129
 msgid "Vfork System Call"
-msgstr ""
+msgstr "Clamade di sisteme \"vfork\""
 
 #: ../src/persp/dbgperspective/nmv-set-breakpoint-dialog.cc:133
 msgid "Exec System Call"
-msgstr ""
+msgstr "Clamade di sisteme exec"
 
 #: ../src/persp/dbgperspective/nmv-thread-list.cc:184
 msgid "Thread ID"
-msgstr ""
+msgstr "ID thread"
 
 #. create the columns of the tree view
 #: ../src/persp/dbgperspective/nmv-vars-treeview.cc:50
 msgid "Variable"
-msgstr ""
+msgstr "Variabil"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
