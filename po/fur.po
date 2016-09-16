@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-09 22:05+0000\n"
-"PO-Revision-Date: 2016-09-16 15:05+0200\n"
+"PO-Revision-Date: 2016-09-16 15:20+0200\n"
 "Language-Team: Friulian <fur@li.org>\n"
 "Language: fur\n"
 "MIME-Version: 1.0\n"
@@ -494,7 +494,7 @@ msgstr "Pas dentri asm"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3337
 msgid "Step into the next assembly instruction"
-msgstr "Passe dentri de prossime istruzion in assembler"
+msgstr "Passe dentri de prossime istruzion in assembly"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3346
 msgid "Step Over asm"
@@ -502,7 +502,7 @@ msgstr "Pas parsore asm"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3347
 msgid "Step over the next assembly instruction"
-msgstr "Passe parsore de prossime istruzion in assembler"
+msgstr "Passe parsore de prossime istruzion in assembly"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3356
 msgid "_Continue"
@@ -583,24 +583,24 @@ msgstr "Inzorne la liste des variabilis locâi ae funzion atuâl"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3455
 msgid "Show Assembly"
-msgstr "Mostre assembler"
+msgstr "Mostre assembly"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3456
 msgid ""
 "Show the assembly code of the source code being currently debugged, in "
 "another tab"
 msgstr ""
-"Mostre il codiç in assembler dal codiç sorzint che si sta fasint il debug, "
+"Mostre il codiç in assembly dal codiç sorzint che si sta fasint il debug, "
 "intune altre schede"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3468
 msgid "Switch to Assembly"
-msgstr "Passe al assembler"
+msgstr "Passe al assembly"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3469
 msgid "Show the assembly code of the source code being currently debugged"
 msgstr ""
-"Mostre il codiç in assembler dal codiç sorzint che si sta fasint il debug "
+"Mostre il codiç in assembly dal codiç sorzint che si sta fasint il debug "
 "cumò denant"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3481
@@ -1086,140 +1086,141 @@ msgstr "Selezione dal eseguibil obietîf"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
-msgstr ""
+msgstr "Selezione dal _File System"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:4
 msgid "Choose Source Files to Open"
-msgstr ""
+msgstr "Sielç i file sorzint di vierzi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:1
 msgid "Preferences"
-msgstr ""
+msgstr "Preferencis"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:2
 msgid "Use system monospace font"
-msgstr ""
+msgstr "Dopre il caratar di sisteme a spazi fis"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:3
 msgid "Custom Font:"
-msgstr ""
+msgstr "Caratar personalizât:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:4
 msgid "Editor Font"
-msgstr ""
+msgstr "Caratar dal Editôr"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:5
 msgid "Visual Style"
-msgstr ""
+msgstr "Stîl viodude"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:6
 msgid "Display line numbers"
-msgstr ""
+msgstr "Mostre i numars di rie"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:7
 msgid "Line Numbers"
-msgstr ""
+msgstr "Numars di rie"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:8
 msgid "Use launch terminal"
-msgstr ""
+msgstr "Doprâ terminâl di inviament"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:9
 msgid "Terminal"
-msgstr ""
+msgstr "Terminâl"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:10
 msgid "When a source file is changed:"
-msgstr ""
+msgstr "Cuant che un file sorzint al è modificât:"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:11
 msgid "Reload the file"
-msgstr ""
+msgstr "Torne cjarie il file"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:12
 msgid "Do not reload the file"
-msgstr ""
+msgstr "No stâ tornâ a cjariâ il file"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:13
 msgid "Ask each time"
-msgstr ""
+msgstr "Domande ogni volte"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:14
 msgid "File Monitoring"
-msgstr ""
+msgstr "Monitorizâ file"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:15
 msgid "Enable syntax highlighting"
-msgstr ""
+msgstr "Abilite evidenziazion de sintassi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:16
 msgid "Syntax Highlighting"
-msgstr ""
+msgstr "Evidenziazion de sintassi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:17
 msgid "Editor"
-msgstr ""
+msgstr "Editôr"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:19
 msgid "Update at each stop"
-msgstr ""
+msgstr "Inzorne a ogni fermade"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:20
 msgid "Local variables"
-msgstr ""
+msgstr "Variabilis locâi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:21
 msgid "Pure assembly"
-msgstr ""
+msgstr "Assembly pûr"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:22
 msgid "Mixed source and assembly"
-msgstr ""
+msgstr "Sorzint e assembly messedâts"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:23
 msgid "Assembly style"
-msgstr ""
+msgstr "Stîl dal assembly"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:24
 msgid "Assembly flavor"
-msgstr ""
+msgstr "Gjenar di assembly"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:25
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:3
 msgid "Choose a File"
-msgstr ""
+msgstr "Sielç un file"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:26
 msgid "Path to the GDB binary used"
-msgstr ""
+msgstr "Percors al binari GDB doprât"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:27
 msgid "GDB Binary"
-msgstr ""
+msgstr "Binari GDB"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:28
 msgid "Number of instructions to disassemble by default"
-msgstr ""
+msgstr "Numar di istruzions di disvuluçâ(disassemblâ) in maniere predefinide"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:29
 msgid "Instructions"
-msgstr ""
+msgstr "Istruzions"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:30
 msgid "Enable pretty printing (requires debugger restart)"
 msgstr ""
+"Abilite la stampe formatade ninine (al covente tornâ a inviâ il debugger)"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:31
 msgid "GDB Pretty Printing"
-msgstr ""
+msgstr "Stampe formatade ninine GDB"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:32
 msgid "Follow parent"
-msgstr ""
+msgstr "Va daûr al gjenitôr"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:33
 msgid "Follow child"
-msgstr ""
+msgstr "Va daûr al fi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
 msgid "GDB Follow Fork Mode"
