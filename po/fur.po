@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-09 22:05+0000\n"
-"PO-Revision-Date: 2016-09-16 15:20+0200\n"
+"PO-Revision-Date: 2016-09-16 16:22+0200\n"
 "Language-Team: Friulian <fur@li.org>\n"
 "Language: fur\n"
 "MIME-Version: 1.0\n"
@@ -1224,198 +1224,198 @@ msgstr "Va daûr al fi"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:34
 msgid "GDB Follow Fork Mode"
-msgstr ""
+msgstr "Modalitât GDB di control dal fork"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:35
 msgid "Debugger"
-msgstr ""
+msgstr "Debugger"
 
 #: ../src/persp/dbgperspective/ui/preferencesdialog.ui.h:36
 msgid "Layout"
-msgstr ""
+msgstr "Disposizion"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:1
 msgid "Attach to a Running Program"
-msgstr ""
+msgstr "Colegament a un program in esecuzion"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:2
 msgid "Choose a Process to Debug"
-msgstr ""
+msgstr "Sielç un procès pal debug"
 
 #: ../src/persp/dbgperspective/ui/proclistdialog.ui.h:3
 msgid "_Filter list:"
-msgstr ""
+msgstr "_Filtrâ la liste:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:1
 msgid "Connect to Remote Target"
-msgstr ""
+msgstr "Conesion a obietîf rimot"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:2
 msgid "Executable to Load"
-msgstr ""
+msgstr "Eseguibil di cjariâ"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:4
 msgid "Shared Libraries Location"
-msgstr ""
+msgstr "Posizion librariis condividudis"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:6
 msgid "Remote Debugging Server"
-msgstr ""
+msgstr "Servidôr di debug rimot"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:7
 msgid "TCP/IP Connection"
-msgstr ""
+msgstr "Conession TCP/IP"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:8
 msgid "Port:"
-msgstr ""
+msgstr "Puarte:"
 
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:10
 msgid "Serial Line Connection"
-msgstr ""
+msgstr "Conession seriâl"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:1
 msgid "Choose a Program to Execute"
-msgstr ""
+msgstr "Sielç un program di eseguî"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:2
 msgid "Choose an Executable"
-msgstr ""
+msgstr "Sielç un eseguibil"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:3
 msgid "Program:"
-msgstr ""
+msgstr "Program:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:4
 msgid "Arguments:"
-msgstr ""
+msgstr "Parametris:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:5
 msgid "Choose a Working Directory"
-msgstr ""
+msgstr "Sielç une cartele dulà lavorâ"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:6
 msgid "Working Directory:"
-msgstr ""
+msgstr "Cartele di lavôr:"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:7
 msgid "_Add"
-msgstr ""
+msgstr "_Zonte"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:8
 msgid "_Remove"
-msgstr ""
+msgstr "_Gjave"
 
 #: ../src/persp/dbgperspective/ui/runprogramdialog.ui.h:9
 msgid "Environment Variables:"
-msgstr ""
+msgstr "Variabilis di ambient:"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:1
 msgid "Saved Sessions"
-msgstr ""
+msgstr "Sessions salvadis"
 
 #: ../src/persp/dbgperspective/ui/savedsessionsdialog.ui.h:2
 msgid "Choose a Session to Debug"
-msgstr ""
+msgstr "Sielç une session pal debug"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:2
 msgid "Set a Breakpoint:"
-msgstr ""
+msgstr "Met un breakpoint:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:3
 msgid "Condition:"
-msgstr ""
+msgstr "Condizion:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:4
 msgid "_Event:"
-msgstr ""
+msgstr "_Event:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:5
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:5
 msgid "_Binary Location:"
-msgstr ""
+msgstr "Posizion _binari:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:6
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:4
 msgid "_Source Location:"
-msgstr ""
+msgstr "Posizion _sorzint:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:7
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:3
 msgid "F_unction Name:"
-msgstr ""
+msgstr "Non f_unzion:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:7
 msgid "File name:"
-msgstr ""
+msgstr "Non file:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:10
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:6
 msgid "Function:"
-msgstr ""
+msgstr "Funzion:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:11
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:8
 msgid "Line:"
-msgstr ""
+msgstr "Rie:"
 
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:12
 msgid "Set as Countpoint"
-msgstr ""
+msgstr "Stabilìs come countpoint"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:1
 msgid "Set Location to Jump To"
-msgstr ""
+msgstr "Stabilìs posizion dulà saltâ"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:2
 msgid "Jump to location:"
-msgstr ""
+msgstr "Salte ae posizion:"
 
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:10
 msgid "Break at Destination"
-msgstr ""
+msgstr "Fermâsi ae destinazion"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:2
 msgid "Add to monitor"
-msgstr ""
+msgstr "Zonte al monitor"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:3
 msgid "_Variable Name:"
-msgstr ""
+msgstr "Non _variabil:"
 
 #: ../src/persp/dbgperspective/ui/exprinspectordialog.ui.h:4
 msgid "_Inspect"
-msgstr ""
+msgstr "_Ispezione"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:1
 msgid "Set a watchpoint:"
-msgstr ""
+msgstr "Stabilìs un watchpoint:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:2
 msgid "Expression:"
-msgstr ""
+msgstr "Espression:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:3
 msgid "Inspect"
-msgstr ""
+msgstr "Ispezione"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:4
 msgid "Triggers on:"
-msgstr ""
+msgstr "Inviâ se:"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:5
 msgid "Read"
-msgstr ""
+msgstr "Leture"
 
 #: ../src/persp/dbgperspective/ui/watchpointdialog.ui.h:6
 msgid "Write"
-msgstr ""
+msgstr "Scriture"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:66
 #, c-format
 msgid "Select Location for %s"
-msgstr ""
+msgstr "Selezion posizion par %s"
 
 #: ../src/uicommon/nmv-locate-file-dialog.cc:76
 #, c-format
@@ -1423,44 +1423,47 @@ msgid ""
 "Cannot find file '%s'.\n"
 "Please specify the location of this file:"
 msgstr ""
+"Impussibil cjatâ il file '%s':\n"
+"Indicâ la posizion di chest file:"
 
 #: ../src/uicommon/nmv-source-editor.cc:646
 #, c-format
 msgid "Line: %i, Column: %i"
-msgstr ""
+msgstr "Rie: %i, Colone: %i"
 
 #: ../src/uicommon/nmv-source-editor.cc:1490
 #, c-format
 msgid "Could not load file %s because its encoding is different from %s"
 msgstr ""
+"Impussibil cjariâ il file %s parcè che la codifiche e je divierse di %s"
 
 #: ../src/uicommon/nmv-terminal.cc:185
 msgid "Copy the selection"
-msgstr ""
+msgstr "Copie la selezion"
 
 #: ../src/uicommon/nmv-terminal.cc:191
 msgid "_Paste"
-msgstr ""
+msgstr "_Tache"
 
 #: ../src/uicommon/nmv-terminal.cc:192
 msgid "Paste the clipboard"
-msgstr ""
+msgstr "Tache intes notis"
 
 #: ../src/uicommon/nmv-terminal.cc:198
 msgid "_Reset"
-msgstr ""
+msgstr "_Ripristinâ"
 
 #: ../src/uicommon/nmv-terminal.cc:199
 msgid "Reset the terminal"
-msgstr ""
+msgstr "Ripristinâ il terminâl"
 
 #: ../src/uicommon/nmv-ui-utils.cc:94
 msgid "Do not ask me again"
-msgstr ""
+msgstr "No stâ domandâmal plui"
 
 #: ../src/workbench/nmv-workbench.cc:263
 msgid "Project Website"
-msgstr ""
+msgstr "Sît web dal progjet"
 
 #. Translators: change this to your name, separate multiple names with \n
 #: ../src/workbench/nmv-workbench.cc:283
@@ -1469,45 +1472,45 @@ msgstr "Fabio Tomat <f.t.public@gmail.com>"
 
 #: ../src/workbench/nmv-workbench.cc:661
 msgid "_File"
-msgstr ""
+msgstr "_File"
 
 #: ../src/workbench/nmv-workbench.cc:672
 msgid "_Quit"
-msgstr ""
+msgstr "_Jes"
 
 #: ../src/workbench/nmv-workbench.cc:673
 msgid "Quit the application"
-msgstr ""
+msgstr "Jes de aplicazion"
 
 #: ../src/workbench/nmv-workbench.cc:683
 msgid "_Edit"
-msgstr ""
+msgstr "_Modifiche"
 
 #: ../src/workbench/nmv-workbench.cc:694
 msgid "_Help"
-msgstr ""
+msgstr "_Jutori"
 
 #: ../src/workbench/nmv-workbench.cc:705
 msgid "_About"
-msgstr ""
+msgstr "_Informazions"
 
 #: ../src/workbench/nmv-workbench.cc:706
 msgid "Display information about this application"
-msgstr ""
+msgstr "Mostre informazions su cheste aplicazion"
 
 #: ../src/workbench/nmv-workbench.cc:716
 msgid "_Contents"
-msgstr ""
+msgstr "_Somari"
 
 #: ../src/workbench/nmv-workbench.cc:717
 msgid "Display the user manual for this application"
-msgstr ""
+msgstr "Mostre il manuâl utent di cheste aplicazion"
 
 #. end extern C
 #: ../ui/locatefiledialog.ui.h:1
 msgid "Select File Location"
-msgstr ""
+msgstr "Selezione posizion file"
 
 #: ../ui/locatefiledialog.ui.h:2
 msgid "Locate File"
-msgstr ""
+msgstr "Localize file"
