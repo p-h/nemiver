@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-09 22:05+0000\n"
-"PO-Revision-Date: 2016-09-15 08:20+0200\n"
+"PO-Revision-Date: 2016-09-16 12:31+0200\n"
 "Language-Team: Friulian <fur@li.org>\n"
 "Language: fur\n"
 "MIME-Version: 1.0\n"
@@ -691,92 +691,93 @@ msgstr "Tache a destinazion _rimote..."
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
 msgstr ""
+"Si tache a un servidôr di debug par fâ il debug di une destinazion rimote"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
-msgstr ""
+msgstr "Ripristine session sal_vade..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3649
 msgid "Open a previously saved debugging session"
-msgstr ""
+msgstr "Al vierç une session di debug salvade"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3659
 msgid "_Preferences"
-msgstr ""
+msgstr "_Preferencis"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3660
 msgid "Edit the properties of the current session"
-msgstr ""
+msgstr "Modifiche lis proprietâts de session atuâl"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3674
 msgid "_Copy selected text"
-msgstr ""
+msgstr "_Copie il test selezionât"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3675
 msgid "Copy the text selected in the current source file"
-msgstr ""
+msgstr "Copie il test selezionât tal file sorzint atuâl"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3684
 msgid "_Reload Source File"
-msgstr ""
+msgstr "Torne cja_rie file sorzint"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3685
 msgid "Reloads the source file"
-msgstr ""
+msgstr "Al torne a cjariâ il file sorzint"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3694
 msgid "_Close Source File"
-msgstr ""
+msgstr "_Siere file sorzint"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3695
 msgid "Close the opened file"
-msgstr ""
+msgstr "Al siere il file viert"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3704
 msgid "_Find"
-msgstr ""
+msgstr "C_jate"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3705
 msgid "Find a text string in file"
-msgstr ""
+msgstr "Cjate une stringhe di test tal file"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:4029
 #, c-format
 msgid "Close %s"
-msgstr ""
+msgstr "Siere %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6029
 msgid "Sorry, it's impossible to restart a remote inferior"
-msgstr ""
+msgstr "Impussibil tornâ a inviâ un inferior rimot"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6174
 #, c-format
 msgid "Could not find file %s"
-msgstr ""
+msgstr "Impussibil cjatâ il file %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6238
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6429
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6464
 #, c-format
 msgid "Could not load program: %s"
-msgstr ""
+msgstr "Impussibil cjariâ il program: %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6357
 msgid "You cannot attach to Nemiver itself"
-msgstr ""
+msgstr "Impussibil tacâsi al Nemiver stes"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6371
 msgid "You cannot attach to the underlying debugger engine"
-msgstr ""
+msgstr "No tu puedis tacâti al motôr di debug"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6667
 msgid "Failed to stop the debugger"
-msgstr ""
+msgstr "No si è rivâts a fermâ il debugger"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:6911
 #, c-format
 msgid "Invalid line number: %i"
-msgstr ""
+msgstr "Numar rie no valit: %i"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:8551
 #, c-format
@@ -784,58 +785,59 @@ msgid ""
 "There is a program being currently debugged. Do you really want to exit from "
 "the debugger?"
 msgstr ""
+"Al moment si sta fasint un debug di un program. Sigûrs di jessi dal debugger?"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:138
 msgid "Default Layout"
-msgstr ""
+msgstr "Disposizion predefinide"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-default-layout.cc:145
 msgid "Nemiver's default layout"
-msgstr ""
+msgstr "La disposizion predefinide di Nemiver"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:132
 msgid "Source Code"
-msgstr ""
+msgstr "Codiç sorzint"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:195
 msgid "Dynamic Layout"
-msgstr ""
+msgstr "Disposizion dinamiche"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-dynamic-layout.cc:202
 msgid "A layout which can be modified"
-msgstr ""
+msgstr "Une disposizion che e pues jessi modificade"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:179
 msgid "Two Status Pane"
-msgstr ""
+msgstr "Doi ricuadris"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-two-pane-layout.cc:186
 msgid "A layout with two status pane"
-msgstr ""
+msgstr "Une disposizion cun doi ricuadris di stât"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:135
 msgid "Wide Layout"
-msgstr ""
+msgstr "Disposizion largje"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective-wide-layout.cc:142
 msgid "A layout for very large monitors"
-msgstr ""
+msgstr "Une disposizion par visôrs une vore larcs"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:128
 msgid "Expand _Selected"
-msgstr ""
+msgstr "Pandi _selezionât"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:134
 msgid "Expand _All"
-msgstr ""
+msgstr "Pandi _dut"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:144
 msgid "_Collapse"
-msgstr ""
+msgstr "_Strenzi"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:427
 msgid "Loading files from target executable..."
-msgstr ""
+msgstr "Cjariament file dal eseguibil de destinazion..."
 
 #: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
@@ -845,66 +847,69 @@ msgid ""
 "Variable type is: \n"
 " %s"
 msgstr ""
+"Il gjenar di variabil e je: \n"
+" %s"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:125
 msgid "Local Variables"
-msgstr ""
+msgstr "Variabilis locâi"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:133
 msgid "Function Arguments"
-msgstr ""
+msgstr "Parametris funzion"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:257
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:136
 msgid "_Copy Variable Name"
-msgstr ""
+msgstr "_Copie non variabil"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:258
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:137
 msgid "Copy the variable path expression to the clipboard"
-msgstr ""
+msgstr "Copie la espression dal percors de variabil intes notis"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:269
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:148
 msgid "_Copy Variable Value"
-msgstr ""
+msgstr "Copie _valôr variabil"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:270
 #: ../src/persp/dbgperspective/nmv-expr-inspector.cc:149
 msgid "Copy the variable value to the clipboard"
-msgstr ""
+msgstr "Copie il valôr de variabil intes notis"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:281
 msgid "Create Watchpoint"
-msgstr ""
+msgstr "Cree watchpoint"
 
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:282
 msgid ""
 "Create a watchpoint that triggers when the value of the expression changes"
 msgstr ""
+"Al cree un watchpoint che si invie al cambiament dal valôr de espression"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:49
 msgid "Byte"
-msgstr ""
+msgstr "Byte"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:52
 msgid "Word"
-msgstr ""
+msgstr "Word"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:55
 msgid "Long Word"
-msgstr ""
+msgstr "Long Word"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:98
 #: ../src/persp/dbgperspective/ui/remotetargetdialog.ui.h:9
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:8
 #: ../src/persp/dbgperspective/ui/setjumptodialog.ui.h:9
 msgid "Address:"
-msgstr ""
+msgstr "Direzion:"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:100
 msgid "Show"
-msgstr ""
+msgstr "Mostre"
 
 #: ../src/persp/dbgperspective/nmv-memory-view.cc:103
 msgid "Group By:"
