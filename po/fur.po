@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=nemiver&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-09-09 22:05+0000\n"
-"PO-Revision-Date: 2016-09-16 12:58+0200\n"
+"PO-Revision-Date: 2016-09-16 15:05+0200\n"
 "Language-Team: Friulian <fur@li.org>\n"
 "Language: fur\n"
 "MIME-Version: 1.0\n"
@@ -100,7 +100,7 @@ msgstr "Dopre chest terminâl come terminâl dal debugger"
 
 #: ../src/main.cc:161
 msgid "Connect to remote target specified by HOST:PORT"
-msgstr "Si conet ae destinazion rimote specificade come SERVIDÔR:PUARTE"
+msgstr "Si conet al obietîf rimot specificât come SERVIDÔR:PUARTE"
 
 #: ../src/main.cc:170
 msgid ""
@@ -280,7 +280,7 @@ msgstr "Contest"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:119
 msgid "Target Terminal"
-msgstr "Terminâl di destinazion"
+msgstr "Terminâl obietîf"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:120
 msgid "Breakpoints"
@@ -342,7 +342,7 @@ msgstr "%s (percors=\"%s\", pid=%i)"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2296
 msgid "Connected to remote target!"
-msgstr "Tachiti ae destinazion rimote."
+msgstr "Tachiti al obietîf rimot."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2498
 msgid "Program exited"
@@ -356,7 +356,7 @@ msgstr "Il motôr di debug disot al è terminât."
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2632
 #, c-format
 msgid "Target received a signal: %s, %s"
-msgstr "La destinazion e à ricevût un segnâl: %s, %s"
+msgstr "L'obietîf al à ricevût un segnâl: %s, %s"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:2648
 #, c-format
@@ -374,8 +374,7 @@ msgstr "_Distachiti dal program in esecuzion"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3176
 msgid "Disconnect the debugger from the running target without killing it"
-msgstr ""
-"Distache il debugger de destinazion in esecuzion cence copâ chest ultin"
+msgstr "Distache il debugger dal obietîf in esecuzion cence copâ chest ultin"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3191
 msgid "_Save Session to Disk"
@@ -391,7 +390,7 @@ msgstr "_Eseguìs o torne invie"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3202
 msgid "Run or Restart the target"
-msgstr "Al eseguìs o al torne a inviâ la destinazion"
+msgstr "Al eseguìs o al torne a inviâ l'obietîf"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3211
 msgid "Set Breakpoint with Dialog..."
@@ -626,7 +625,7 @@ msgstr "_Visualize"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3518
 msgid "Switch to Target Terminal View"
-msgstr "Passe ae viodude \"Terminâl de destinazion\""
+msgstr "Passe ae viodude \"Terminâl obietîf\""
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3529
 msgid "Switch to Context View"
@@ -686,12 +685,11 @@ msgstr "Al eseguìs il debug di un program che al sta za zirant"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3636
 msgid "_Connect to Remote Target..."
-msgstr "Tache a destinazion _rimote..."
+msgstr "Tache al obietîf _rimot..."
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3637
 msgid "Connect to a debugging server to debug a remote target"
-msgstr ""
-"Si tache a un servidôr di debug par fâ il debug di une destinazion rimote"
+msgstr "Si tache a un servidôr di debug par fâ il debug di un obietîf rimot"
 
 #: ../src/persp/dbgperspective/nmv-dbg-perspective.cc:3648
 msgid "Resume Sa_ved Session..."
@@ -837,7 +835,7 @@ msgstr "_Strenzi"
 
 #: ../src/persp/dbgperspective/nmv-file-list.cc:427
 msgid "Loading files from target executable..."
-msgstr "Cjariament file dal eseguibil de destinazion..."
+msgstr "Cjariament file dal eseguibil obitîf..."
 
 #: ../src/persp/dbgperspective/nmv-global-vars-inspector-dialog.cc:300
 #: ../src/persp/dbgperspective/nmv-local-vars-inspector.cc:592
@@ -979,110 +977,112 @@ msgstr "Variabil"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:128
 msgid "In scope expressions"
-msgstr ""
+msgstr "Espressions tal ambit"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:133
 msgid "Out of scope expressions"
-msgstr ""
+msgstr "Espressions fûr ambit"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:237
 msgid "Remove"
-msgstr ""
+msgstr "Gjave"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:238
 msgid "Remove selected expressions from the monitor"
-msgstr ""
+msgstr "Al gjave lis espressions selezionadis dal monitor"
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:247
 msgid "New..."
-msgstr ""
+msgstr "Gnove..."
 
 #: ../src/persp/dbgperspective/nmv-expr-monitor.cc:248
 msgid "Add a new expression to the monitor"
-msgstr ""
+msgstr "Al zonte une gnove espression al monitor"
 
 #: ../src/persp/dbgperspective/ui/callfunctiondialog.ui.h:2
 msgid "Call a function:"
-msgstr ""
+msgstr "Clame une funzion:"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:1
 #: ../src/persp/dbgperspective/ui/setbreakpointdialog.ui.h:1
 msgid "Set Breakpoint"
-msgstr ""
+msgstr "Met breakpoint"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:2
 msgid "Choose Overloaded Function"
-msgstr ""
+msgstr "Sielç funzion sorecjariade"
 
 #: ../src/persp/dbgperspective/ui/chooseoverloadsdialog.ui.h:3
 msgid ""
 "Multiple functions match the specified name. Please choose one from the list "
 "below."
 msgstr ""
+"Plui funzions a corispuindin al non specificât. Sielç une de liste chi "
+"daurman."
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:1
 msgid "Find Text"
-msgstr ""
+msgstr "Cjate test"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:2
 msgid "_Search:"
-msgstr ""
+msgstr "Cî_r:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:3
 msgid "Match Options:"
-msgstr ""
+msgstr "Opzions di corispuindince:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:4
 msgid "Match c_ase"
-msgstr ""
+msgstr "M_aiusculis/Minusculis"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:5
 msgid "Match _entire word only"
-msgstr ""
+msgstr "Corispuindince nome peraulis _intieris"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:6
 msgid "Cycling Options:"
-msgstr ""
+msgstr "Opzions pe ricercje cicliche:"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:7
 msgid "_Wrap around"
-msgstr ""
+msgstr "_Torne tache dal inizi"
 
 #: ../src/persp/dbgperspective/ui/findtextdialog.ui.h:8
 msgid "Search _backwards"
-msgstr ""
+msgstr "Cîr par _ledrôs"
 
 #: ../src/persp/dbgperspective/ui/globalvarsinspector.ui.h:1
 msgid "Global Variables"
-msgstr ""
+msgstr "Variabilis globâi"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:1
 msgid "Choose a Core File to Debug"
-msgstr ""
+msgstr "Sielte file core pal debug"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:2
 msgid "Select a Core File"
-msgstr ""
+msgstr "Selezione un file core"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:3
 msgid "Core File:"
-msgstr ""
+msgstr "File core:"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:4
 msgid "Select the executable that created the core file"
-msgstr ""
+msgstr "Selezione l'eseguibil che al à creât il file core"
 
 #: ../src/persp/dbgperspective/ui/loadcoredialog.ui.h:5
 msgid "Executable:"
-msgstr ""
+msgstr "Eseguibil:"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:1
 msgid "Open Source Files"
-msgstr ""
+msgstr "Vierç file sorzint"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:2
 msgid "Select from _Target Executable"
-msgstr ""
+msgstr "Selezione dal eseguibil obietîf"
 
 #: ../src/persp/dbgperspective/ui/openfiledialog.ui.h:3
 msgid "Select from _File System"
