@@ -782,7 +782,7 @@ Workbench::add_perspective_toolbars (IPerspectiveSafePtr &a_perspective,
 
     if (a_tbs.empty ()) {return;}
 
-    SafePtr<Gtk::Box> box (Gtk::manage (new Gtk::VBox));
+    SafePtr<Gtk::Box> box (Gtk::manage (new Gtk::Box(Gtk::ORIENTATION_VERTICAL)));
     list<Gtk::Widget*>::const_iterator iter;
 
     for (iter = a_tbs.begin (); iter != a_tbs.end (); ++iter) {

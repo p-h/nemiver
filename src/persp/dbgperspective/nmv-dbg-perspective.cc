@@ -888,7 +888,7 @@ struct DBGPerspective::Priv {
 
     LayoutManager layout_mgr;
     IWorkbench *workbench;
-    SafePtr<Gtk::HBox> toolbar;
+    SafePtr<Gtk::Box> toolbar;
     SafePtr<Gtk::Notebook> sourceviews_notebook;
     SafePtr<SpinnerToolItem> throbber;
     sigc::signal<void, bool> activated_signal;
@@ -3789,7 +3789,7 @@ DBGPerspective::init_toolbar ()
     add_perspective_toolbar_entries ();
 
     m_priv->throbber.reset (new SpinnerToolItem);
-    m_priv->toolbar.reset ((new Gtk::HBox));
+    m_priv->toolbar.reset ((new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL)));
     THROW_IF_FAIL (m_priv->toolbar);
     Gtk::Toolbar *glade_toolbar = dynamic_cast<Gtk::Toolbar*>
             (workbench ().get_ui_manager ()->get_widget ("/ToolBar"));
@@ -4029,7 +4029,7 @@ DBGPerspective::append_source_editor (SourceEditor &a_sv,
     message.printf (_("Close %s"), path.c_str ());
     close_button->set_tooltip_text (message);
 
-    SafePtr<Gtk::HBox> hbox (Gtk::manage (new Gtk::HBox ()));
+    SafePtr<Gtk::Box> hbox (Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL)));
     // add a bit of space between the label and the close button
     hbox->set_spacing (4);
 
@@ -8383,7 +8383,7 @@ DBGPerspective::get_terminal_box ()
 {
     THROW_IF_FAIL (m_priv);
     if (!m_priv->terminal_box) {
-        m_priv->terminal_box.reset (new Gtk::HBox);
+        m_priv->terminal_box.reset (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
         THROW_IF_FAIL (m_priv->terminal_box);
         Gtk::VScrollbar *scrollbar = Gtk::manage (new Gtk::VScrollbar);
         m_priv->terminal_box->pack_end (*scrollbar, false, false, 0);

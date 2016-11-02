@@ -82,7 +82,7 @@ public:
     Glib::RefPtr<Gtk::ListStore> m_editor_style_model;
     StyleModelColumns m_style_columns;
     Gtk::CellRendererText m_style_name_renderer;
-    Gtk::HBox *custom_font_box;
+    Gtk::Box *custom_font_box;
     Gtk::Box *layout_box;
     Gtk::CheckButton *show_lines_check_button;
     Gtk::CheckButton *launch_terminal_check_button;
@@ -358,7 +358,7 @@ public:
              &PreferencesDialog::Priv::on_custom_font_set_signal));
 
         custom_font_box =
-            ui_utils::get_widget_from_gtkbuilder<Gtk::HBox>
+            ui_utils::get_widget_from_gtkbuilder<Gtk::Box>
             (gtkbuilder, "customfonthbox");
         THROW_IF_FAIL (custom_font_box);
 

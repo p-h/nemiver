@@ -84,8 +84,8 @@ public:
     SafePtr<Gtk::Label> m_address_label;
     SafePtr<Gtk::Entry> m_address_entry;
     SafePtr<Gtk::Button> m_jump_button;
-    SafePtr<Gtk::HBox> m_hbox;
-    SafePtr<Gtk::VBox> m_vbox;
+    SafePtr<Gtk::Box> m_hbox;
+    SafePtr<Gtk::Box> m_vbox;
     SafePtr<Gtk::Label> m_group_label;
     GroupingComboBox m_grouping_combo;
     SafePtr<Gtk::ScrolledWindow> m_container;
@@ -98,8 +98,8 @@ public:
         m_address_label (new Gtk::Label (_("Address:"))),
         m_address_entry (new Gtk::Entry ()),
         m_jump_button (new Gtk::Button (_("Show"))),
-        m_hbox (new Gtk::HBox ()),
-        m_vbox (new Gtk::VBox ()),
+        m_hbox (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL)),
+        m_vbox (new Gtk::Box (Gtk::ORIENTATION_VERTICAL)),
         m_group_label (new Gtk::Label (_("Group By:"))),
         m_container (new Gtk::ScrolledWindow ()),
         m_document (Hex::Document::create ()),

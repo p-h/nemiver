@@ -148,7 +148,7 @@ DBGPerspectiveDynamicLayout::do_lay_out (IPerspective &a_perspective)
     m_priv->dock_bar.reset (new Gdl::DockBar (*m_priv->dock));
     m_priv->dock_bar->set_style (Gdl::DOCK_BAR_TEXT);
 
-    m_priv->main_box.reset (new Gtk::HBox);
+    m_priv->main_box.reset (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL));
     m_priv->main_box->pack_start (*m_priv->dock_bar, false, false);
     m_priv->main_box->pack_end (*m_priv->dock);
     m_priv->main_box->show_all ();

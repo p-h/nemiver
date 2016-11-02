@@ -39,7 +39,7 @@
 
 using Gsv::View;
 using Gsv::Buffer;
-using Gtk::VBox;
+using Gtk::Box;
 using nemiver::common::SafePtr;
 using nemiver::common::UString;
 using nemiver::common::Address;
@@ -57,7 +57,7 @@ extern const char* WHERE_CATEGORY;
 extern const char* WHERE_MARK;
 
 
-class SourceEditor : public  VBox {
+class SourceEditor : public  Box {
     //non copyable
     SourceEditor (const SourceEditor&);
     SourceEditor& operator= (const SourceEditor&);

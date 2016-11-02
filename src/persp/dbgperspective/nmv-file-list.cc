@@ -412,7 +412,7 @@ FileListView::find_filename_recursive (const Gtk::TreeModel::iterator &a_iter,
 
 struct FileList::Priv : public sigc::trackable {
 public:
-    SafePtr<Gtk::VBox> vbox;
+    SafePtr<Gtk::Box> vbox;
     SafePtr<Gtk::ScrolledWindow> scrolled_window;
     SafePtr<Gtk::Label> loading_indicator;
     SafePtr<FileListView> tree_view;
@@ -422,7 +422,7 @@ public:
     UString start_path;
 
     Priv (IDebuggerSafePtr &a_debugger, const UString &a_starting_path) :
-        vbox (new Gtk::VBox()),
+        vbox (new Gtk::Box (Gtk::ORIENTATION_VERTICAL)),
         scrolled_window (new Gtk::ScrolledWindow ()),
         loading_indicator (new Gtk::Label (_("Loading files from target executable..."))),
         debugger (a_debugger),

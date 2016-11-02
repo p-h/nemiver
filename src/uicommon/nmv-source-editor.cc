@@ -176,7 +176,7 @@ struct SourceEditor::Priv {
     Gtk::Window &parent_window;
     nemiver::SourceView *source_view;
     Gtk::Label *line_col_label;
-    Gtk::HBox *status_box;
+    Gtk::Box *status_box;
     enum SourceEditor::BufferType buffer_type;
     UString path;
 
@@ -715,7 +715,7 @@ struct SourceEditor::Priv {
         parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView)),
         line_col_label (Gtk::manage (new Gtk::Label)),
-        status_box (Gtk::manage (new Gtk::HBox)),
+        status_box (Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL))),
         non_asm_ctxt (-1, -1)
 
     {
@@ -730,7 +730,7 @@ struct SourceEditor::Priv {
         parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView (a_buf))),
         line_col_label (Gtk::manage (new Gtk::Label)),
-        status_box (Gtk::manage (new Gtk::HBox)),
+        status_box (Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL))),
         non_asm_ctxt (-1, -1)
     {
         Glib::RefPtr<Buffer> b;
@@ -749,7 +749,7 @@ struct SourceEditor::Priv {
         root_dir (a_root_dir),
         parent_window (a_parent_window),
         source_view (Gtk::manage (new SourceView (a_buf))),
-        status_box (Gtk::manage (new Gtk::HBox)),
+        status_box (Gtk::manage (new Gtk::Box (Gtk::ORIENTATION_HORIZONTAL))),
         non_asm_ctxt (-1, -1)
     {
         Glib::RefPtr<Buffer> b;
@@ -798,7 +798,8 @@ SourceEditor::init ()
 SourceEditor::SourceEditor (Gtk::Window &a_parent_window,
                             const UString &a_root_dir,
                             Glib::RefPtr<Buffer> &a_buf,
-                            bool a_assembly)
+                            bool a_assembly) :
+    Box (Gtk::ORIENTATION_VERTICAL)
 {
     m_priv.reset (new Priv (a_parent_window,
                             a_root_dir,
