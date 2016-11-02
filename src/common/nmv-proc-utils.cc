@@ -131,7 +131,7 @@ launch_program (const std::vector<UString> &a_args,
                     O_SYNC | state_flag);
         }
 
-        std::auto_ptr<char *> args;
+        std::unique_ptr<char * []> args;
         args.reset (new char* [a_args.size () + 1]);
         memset (args.get (), 0,
                 sizeof (char*) * (a_args.size () + 1));
