@@ -118,7 +118,7 @@ search_next_element_node (XMLTextReaderSafePtr &a_reader,
         status = xmlTextReaderRead (a_reader.get ());
         if (status == 0) {
             return false;
-        } else if (result < 0) {
+        } else if (status < 0) {
             THROW ("parsing error");
         }
         node_type = static_cast<xmlReaderTypes>
