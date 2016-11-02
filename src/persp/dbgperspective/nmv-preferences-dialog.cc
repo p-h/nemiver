@@ -943,7 +943,7 @@ PreferencesDialog::PreferencesDialog (Gtk::Window &a_parent,
 PreferencesDialog::~PreferencesDialog ()
 {
     LOG_D ("delete", "destructor-domain");
-    THROW_IF_FAIL (m_priv);
+    ABORT_IF_FAIL (m_priv);
 }
 
 const std::vector<UString>&

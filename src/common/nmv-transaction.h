@@ -122,7 +122,8 @@ struct TransactionAutoHelper
             return;
         }
         if (m_is_started) {
-            THROW_IF_FAIL (m_trans.rollback ());
+            ABORT_IF_FAIL2 (m_trans.rollback (),
+                           "Failed to rollback transation");
             m_is_started = false;
         }
     }
