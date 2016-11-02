@@ -27,11 +27,7 @@
 #ifndef __NMV_DBG_COMMON_H_H__
 #define __NMV_DBG_COMMON_H_H__
 #include "nmv-i-debugger.h"
-#if defined(HAVE_TR1_MEMORY)
-#include <tr1/memory>
-#elif defined(HAVE_BOOST_TR1_MEMORY_HPP)
-#include <boost/tr1/memory.hpp>
-#endif
+#include <memory>
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 
@@ -41,7 +37,7 @@ NEMIVER_BEGIN_NAMESPACE (nemiver)
 /// of a variable value.
 class VarChange {
     struct Priv;
-    std::tr1::shared_ptr<Priv> m_priv;
+    std::shared_ptr<Priv> m_priv;
 
 public:
     VarChange ();
@@ -73,7 +69,7 @@ public:
     void apply_to_variable (IDebugger::VariableSafePtr a_var,
 			    std::list<IDebugger::VariableSafePtr> &a_changed_vars);
 };
-typedef std::tr1::shared_ptr<VarChange> VarChangePtr;
+typedef std::shared_ptr<VarChange> VarChangePtr;
 
 /// Update variable a_to with new bits from a_from.  Note that only
 /// things that can reasonably change are updated here.

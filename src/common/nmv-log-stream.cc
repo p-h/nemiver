@@ -43,34 +43,14 @@
 #include "nmv-date-utils.h"
 #include "nmv-safe-ptr-utils.h"
 
-#if defined(HAVE_TR1_UNORDERED_MAP)
-#include <tr1/unordered_map>
-#elif defined(HAVE_BOOST_TR1_UNORDERED_MAP_HPP)
-#include <boost/tr1/unordered_map.hpp>
-#else
-#include <ext/hash_map>
-
-namespace __gnu_cxx {
-    template<>
-    struct hash<std::string> {
-        size_t operator() (const std::string& s) const
-        {
-            return hash<const char*>() (s.c_str ());
-        }
-    };
-}
-#endif
+#include <unordered_map>
 
 namespace nemiver {
 namespace common {
 
 using namespace std;
 
-#if defined(HAVE_TR1_UNORDERED_MAP) || defined(HAVE_BOOST_TR1_UNORDERED_MAP_HPP)
-typedef std::tr1::unordered_map<std::string, bool> DomainMap;
-#else
-typedef __gnu_cxx::hash_map<std::string, bool> DomainMap;
-#endif
+typedef std::unordered_map<std::string, bool> DomainMap;
 
 static enum LogStream::StreamType s_stream_type = LogStream::COUT_STREAM;
 static enum LogStream::LogLevel s_level_filter = LogStream::LOG_LEVEL_NORMAL;

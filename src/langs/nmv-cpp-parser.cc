@@ -1831,7 +1831,7 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
                 break;
             }
             TypeSpecifierPtr type_specifier =
-                std::tr1::static_pointer_cast<TypeSpecifier> (decl);
+                std::static_pointer_cast<TypeSpecifier> (decl);
             //— const or volatile can be combined with any other type-specifier.
             //  However, redundant cv-qualifiers are prohibited except
             if (type_specifier->is_cv_qualifier ()) {
@@ -1852,7 +1852,7 @@ Parser::parse_decl_specifier_seq (list<DeclSpecifierPtr> &a_result)
                 //— long can be combined with double.
                 //TODO: handle this
                 SimpleTypeSpecPtr simple_type_spec =
-                    std::tr1::static_pointer_cast<SimpleTypeSpec> (type_specifier);
+                    std::static_pointer_cast<SimpleTypeSpec> (type_specifier);
 
                 result.push_back (simple_type_spec);
                 string type_name_str = simple_type_spec->get_name_as_string ();

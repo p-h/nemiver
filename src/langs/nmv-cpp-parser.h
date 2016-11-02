@@ -26,6 +26,7 @@
 #define __NMV_CPP_PARSER_H__
 
 #include <string>
+#include <memory>
 #include "nmv-cpp-ast.h"
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
@@ -33,7 +34,7 @@
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (cpp)
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::string;
 
 class NEMIVER_API Parser {

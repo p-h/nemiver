@@ -28,18 +28,14 @@
 #include "config.h"
 #include <string>
 #include <list>
-#if defined(HAVE_TR1_MEMORY)
-#include <tr1/memory>
-#elif defined(HAVE_BOOST_TR1_MEMORY_HPP)
-#include <boost/tr1/memory.hpp>
-#endif
+#include <memory>
 #include "common/nmv-namespace.h"
 #include "common/nmv-api-macros.h"
 
 NEMIVER_BEGIN_NAMESPACE (nemiver)
 NEMIVER_BEGIN_NAMESPACE (cpp)
 
-using std::tr1::shared_ptr;
+using std::shared_ptr;
 using std::list;
 using std::string;
 

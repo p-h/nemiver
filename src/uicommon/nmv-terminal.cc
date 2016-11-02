@@ -36,11 +36,7 @@
 #endif
 #include <unistd.h>
 #include <iostream>
-#if defined(HAVE_TR1_TUPLE)
-#include <tr1/tuple>
-#elif defined(HAVE_BOOST_TR1_TUPLE_HPP)
-#include <boost/tr1/tuple.hpp>
-#endif
+#include <tuple>
 #include <gtkmm/bin.h>
 #include <gtkmm/main.h>
 #include <gtkmm/window.h>
@@ -60,7 +56,7 @@ NEMIVER_BEGIN_NAMESPACE(nemiver)
 
 using namespace common;
 
-typedef std::tr1::tuple<VteTerminal*&,
+typedef std::tuple<VteTerminal*&,
                    Gtk::Menu*&,
                    Glib::RefPtr<Gtk::ActionGroup>&> TerminalPrivDataTuple;
 
@@ -76,9 +72,9 @@ on_button_press_signal (GtkWidget*,
     NEMIVER_TRY;
 
     THROW_IF_FAIL (a_tuple);
-    VteTerminal*& vte = std::tr1::get<0> (*a_tuple);
-    Gtk::Menu*& menu = std::tr1::get<1> (*a_tuple);
-    Glib::RefPtr<Gtk::ActionGroup>& action_group = std::tr1::get<2> (*a_tuple);
+    VteTerminal*& vte = std::get<0> (*a_tuple);
+    Gtk::Menu*& menu = std::get<1> (*a_tuple);
+    Glib::RefPtr<Gtk::ActionGroup>& action_group = std::get<2> (*a_tuple);
 
     THROW_IF_FAIL (vte);
     THROW_IF_FAIL (action_group);

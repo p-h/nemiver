@@ -274,11 +274,6 @@ dnl detect if c++11 is required, because of glibmm-24 >= 2.46
 PKG_CHECK_EXISTS([glibmm-2.4 >= 2.46],
                  [CXX11_IS_REQUIRED=yes],
 		 [CXX11_IS_REQUIRED=no])
-		 
-dnl Check for tr1 headers
-AC_CHECK_HEADERS([tr1/unordered_map boost/tr1/unordered_map.hpp])
-AC_CHECK_HEADERS([tr1/memory boost/tr1/memory.hpp])
-AC_CHECK_HEADERS([tr1/tuple boost/tr1/tuple.hpp])
 
 dnl Check for pty.h and its alternatives
 dnl https://www.gnu.org/software/gnulib/manual/html_node/pty_002eh.html

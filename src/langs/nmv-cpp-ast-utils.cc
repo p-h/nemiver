@@ -47,7 +47,7 @@ get_declarator_id_as_string (const DeclaratorPtr a_decl, string &a_id)
             return true;
         case Declarator::ARRAY_DECLARATOR: {
             ArrayDeclaratorPtr decl;
-            decl = std::tr1::static_pointer_cast<ArrayDeclarator> (a_decl);
+            decl = std::static_pointer_cast<ArrayDeclarator> (a_decl);
             if (!decl->get_declarator ()) {
                 return false;
             }
