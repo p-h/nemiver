@@ -766,6 +766,8 @@ public:
 
     Gtk::ScrolledWindow& get_registers_scrolled_win ();
 
+    Gtk::ScrolledWindow& get_expressions_monitor_scrolled_win ();
+
     RegistersView& get_registers_view ();
 
 #ifdef WITH_MEMORYVIEW
@@ -909,6 +911,7 @@ struct DBGPerspective::Priv {
     SafePtr<BreakpointsView> breakpoints_view;
     SafePtr<ThreadList> thread_list;
     SafePtr<Gtk::ScrolledWindow> registers_scrolled_win;
+    SafePtr<Gtk::ScrolledWindow> expressions_monitor_scrolled_win;
     SafePtr<RegistersView> registers_view;
 #ifdef WITH_MEMORYVIEW
     SafePtr<MemoryView> memory_view;
@@ -3835,6 +3838,7 @@ DBGPerspective::init_body ()
                                     (get_local_vars_inspector ().widget ());
     get_breakpoints_scrolled_win ().add (get_breakpoints_view ().widget());
     get_registers_scrolled_win ().add (get_registers_view ().widget());
+    get_expressions_monitor_scrolled_win ().add (get_expr_monitor_view ().widget());
 
     m_priv->sourceviews_notebook.reset (new Gtk::Notebook);
     m_priv->sourceviews_notebook->remove_page ();
@@ -5130,7 +5134,7 @@ DBGPerspective::add_views_to_layout ()
                                    MEMORY_VIEW_TITLE,
                                    MEMORY_VIEW_INDEX);
     #endif // WITH_MEMORYVIEW
-    m_priv->layout ().append_view (get_expr_monitor_view ().widget (),
+    m_priv->layout ().append_view (get_expressions_monitor_scrolled_win (),
                                    EXPR_MONITOR_VIEW_TITLE,
                                    EXPR_MONITOR_VIEW_INDEX);
     m_priv->layout ().do_init ();
@@ -8452,6 +8456,20 @@ DBGPerspective::get_registers_scrolled_win ()
     }
     THROW_IF_FAIL (m_priv->registers_scrolled_win);
     return *m_priv->registers_scrolled_win;
+}
+
+Gtk::ScrolledWindow&
+DBGPerspective::get_expressions_monitor_scrolled_win ()
+{
+    THROW_IF_FAIL (m_priv);
+    if (!m_priv->expressions_monitor_scrolled_win) {
+        m_priv->expressions_monitor_scrolled_win.reset (new Gtk::ScrolledWindow);
+        THROW_IF_FAIL (m_priv->expressions_monitor_scrolled_win);
+        m_priv->expressions_monitor_scrolled_win->set_policy (Gtk::POLICY_AUTOMATIC,
+                                                    Gtk::POLICY_AUTOMATIC);
+    }
+    THROW_IF_FAIL (m_priv->expressions_monitor_scrolled_win);
+    return *m_priv->expressions_monitor_scrolled_win;
 }
 
 RegistersView&
