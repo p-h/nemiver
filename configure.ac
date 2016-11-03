@@ -2,12 +2,13 @@ dnl **************************************************************
 dnl Process this file with autoconf to produce a configure script.
 dnl **************************************************************
 
-MAJOR_VERSION=0
-MINOR_VERSION=9
-MICRO_VERSION=6
+m4_define([nmv_version_major], [0])
+m4_define([nmv_version_minor], [9])
+m4_define([nmv_version_micro], [6])
+m4_define([nmv_version], [nmv_version_major.nmv_version_minor.nmv_version_micro])
 
 AC_INIT([nemiver],
-        [0.9.6],
+        [nmv_version],
         [http://bugzilla.gnome.org/enter_bug.cgi?product=nemiver],
         [nemiver],
         [https://wiki.gnome.org/Apps/Nemiver])
@@ -28,7 +29,7 @@ dnl compilation output.
 AM_SILENT_RULES([yes])
 
 
-NEMIVER_VERSION="$MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION"
+NEMIVER_VERSION="nmv_version"
 AC_SUBST(NEMIVER_VERSION)
 
 dnl ************************************************************
@@ -547,7 +548,7 @@ AC_OUTPUT
 
 AC_MSG_NOTICE([
 =================================================================
-         Nemiver: $MAJOR_VERSION.$MINOR_VERSION.$MICRO_VERSION
+         Nemiver: $NEMIVER_VERSION
 =================================================================
         Here is the configuration of the package:
 

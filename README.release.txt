@@ -1,9 +1,8 @@
 How to do a Nemiver release
 
 * Make sure configure.ac has the right version variables set
- - These are MAJOR_VERSION, MINOR_VERSION, MICRO_VERSION and the version part of
-  the AC_INIT macro invocation.  Normally these should have been
-  already set, but you never know.
+ - These are nmv_version_major, nmv_version_minor, nmv_version_micro m4_defines.
+   Normally these should have been already set, but you never know.
  - Commit this.
 
 * Update the NEWS file:
