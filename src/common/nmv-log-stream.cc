@@ -376,7 +376,7 @@ LogStream::LogStream (enum LogLevel a_level,
 LogStream::~LogStream ()
 {
     LOG_D ("delete", "destructor-domain");
-    ABORT_IF_FAIL2 (!m_priv, "double free in LogStream::~LogStream");
+    ABORT_IF_FAIL2 (m_priv, "double free in LogStream::~LogStream");
     m_priv.reset ();
 }
 
