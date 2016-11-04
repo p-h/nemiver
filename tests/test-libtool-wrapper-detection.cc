@@ -12,8 +12,9 @@ using boost::unit_test::test_suite;
 using std::vector;
 using std::string;
 
-void
-test0 ()
+BOOST_AUTO_TEST_SUITE (test_libtool_wrapper_detection)
+
+BOOST_AUTO_TEST_CASE (test0)
 {
     vector<string> path_elems;
     path_elems.push_back (NEMIVER_BUILDDIR);
@@ -23,8 +24,7 @@ test0 ()
     BOOST_REQUIRE (is_libtool_executable_wrapper (path));
 }
 
-void
-test_filename_with_dashes()
+BOOST_AUTO_TEST_CASE (test_filename_with_dashes)
 {
     vector<string> path_elems;
     path_elems.push_back (NEMIVER_SRCDIR);
@@ -36,22 +36,16 @@ test_filename_with_dashes()
 
 }
 
-test_suite*
-init_unit_test_suite (int argc, char** argv)
+bool
+init_unit_test ()
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
-
-    test_suite *suite = BOOST_TEST_SUITE ("libtool wrapper detect tests");
-    suite->add (BOOST_TEST_CASE (&test0));
-    suite->add (BOOST_TEST_CASE (&test_filename_with_dashes));
-    return suite;
 
     NEMIVER_CATCH_NOX
 
     return 0;
 }
 
+BOOST_AUTO_TEST_SUITE_END()

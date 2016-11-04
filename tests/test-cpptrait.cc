@@ -11,7 +11,9 @@ using nemiver::common::DynamicModuleManager;
 using nemiver::ILangTraitSafePtr;
 using nemiver::ILangTrait;
 
-void test_load_dynmod ()
+BOOST_AUTO_TEST_SUITE (test_cpptrait)
+
+BOOST_AUTO_TEST_CASE (test_load_dynmod)
 {
     ILangTraitSafePtr trait =
         DynamicModuleManager::load_iface_with_default_manager<ILangTrait>
@@ -20,7 +22,7 @@ void test_load_dynmod ()
     //BOOST_REQUIRE (trait);
 }
 
-void test_name ()
+BOOST_AUTO_TEST_CASE (test_name)
 {
     ILangTraitSafePtr trait =
         DynamicModuleManager::load_iface_with_default_manager<ILangTrait>
@@ -29,7 +31,7 @@ void test_name ()
     BOOST_REQUIRE (trait->get_name () == "cpptrait");
 }
 
-void test_is_pointer ()
+BOOST_AUTO_TEST_CASE (test_is_pointer)
 {
     ILangTraitSafePtr trait =
         DynamicModuleManager::load_iface_with_default_manager<ILangTrait>
@@ -41,7 +43,7 @@ void test_is_pointer ()
     BOOST_REQUIRE (trait->is_type_a_pointer ("AType * const"));
 }
 
-void test_debugger ()
+BOOST_AUTO_TEST_CASE (test_debugger)
 {
     using nemiver::IDebugger;
     using nemiver::IDebuggerSafePtr;
@@ -52,23 +54,16 @@ void test_debugger ()
     BOOST_REQUIRE (trait.get_name () == "cpptrait");
 }
 
-using boost::unit_test::test_suite;
-
-NEMIVER_API test_suite*
-init_unit_test_suite (int, char **)
+NEMIVER_API bool
+init_unit_test ()
 {
     NEMIVER_TRY
 
     Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("cpp language trait tests");
-    suite->add (BOOST_TEST_CASE (&test_load_dynmod));
-    suite->add (BOOST_TEST_CASE (&test_name));
-    suite->add (BOOST_TEST_CASE (&test_is_pointer));
-    suite->add (BOOST_TEST_CASE (&test_debugger));
-    return suite;
-
     NEMIVER_CATCH_NOX
 
     return 0;
 }
+
+BOOST_AUTO_TEST_SUITE_END()

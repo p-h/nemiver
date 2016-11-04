@@ -17,8 +17,9 @@ using nemiver::cpp::Token;
 using nemiver::common::Initializer;
 namespace cpp=nemiver::cpp;
 
-void
-test_lexer ()
+BOOST_AUTO_TEST_SUITE (test_cpp_lexer)
+
+BOOST_AUTO_TEST_CASE (test_lexer)
 {
     Lexer lexer (prog);
     Token token;
@@ -33,8 +34,7 @@ test_lexer ()
     std::cout << "tokenization done okay" << std::endl;
 }
 
-void
-test_lexer2 ()
+BOOST_AUTO_TEST_CASE (test_lexer2)
 {
     Lexer lexer (prog2);
     Token token;
@@ -49,23 +49,16 @@ test_lexer2 ()
     std::cout << "tokenization done okay" << std::endl;
 }
 
-using boost::unit_test::test_suite;
-
-test_suite*
-init_unit_test_suite (int argc, char** argv)
+bool
+init_unit_test ()
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
-
-    test_suite *suite = BOOST_TEST_SUITE ("c++ lexer tests");
-    suite->add (BOOST_TEST_CASE (&test_lexer));
-    suite->add (BOOST_TEST_CASE (&test_lexer2));
-    return suite;
 
     NEMIVER_CATCH_NOX
 
     return 0;
 }
+
+BOOST_AUTO_TEST_SUITE_END()

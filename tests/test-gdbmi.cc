@@ -188,8 +188,9 @@ static const char *gv_disassemble4 = "asm_insns=[src_and_asm_line={line=\"0\",fi
 static const char* gv_file_list1 =
 "files=[{file=\"fooprog.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/tests/fooprog.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/locale_facets.h\",fullname=\"/usr/include/c++/4.3.2/bits/locale_facets.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/x86_64-redhat-linux/bits/ctype_base.h\",fullname=\"/usr/include/c++/4.3.2/x86_64-redhat-linux/bits/ctype_base.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/numeric_traits.h\",fullname=\"/usr/include/c++/4.3.2/ext/numeric_traits.h\"},{file=\"/usr/include/wctype.h\",fullname=\"/usr/include/wctype.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/locale_classes.h\",fullname=\"/usr/include/c++/4.3.2/bits/locale_classes.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stringfwd.h\",fullname=\"/usr/include/c++/4.3.2/bits/stringfwd.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/x86_64-redhat-linux/bits/atomic_word.h\",fullname=\"/usr/include/c++/4.3.2/x86_64-redhat-linux/bits/atomic_word.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/x86_64-redhat-linux/bits/gthr-default.h\",fullname=\"/usr/include/c++/4.3.2/x86_64-redhat-linux/bits/gthr-default.h\"},{file=\"/usr/include/bits/pthreadtypes.h\",fullname=\"/usr/include/bits/pthreadtypes.h\"},{file=\"/usr/include/locale.h\",fullname=\"/usr/include/locale.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/include/_G_config.h\",fullname=\"/usr/include/_G_config.h\"},{file=\"/usr/include/bits/types.h\",fullname=\"/usr/include/bits/types.h\"},{file=\"/usr/include/time.h\",fullname=\"/usr/include/time.h\"},{file=\"/usr/include/wchar.h\",fullname=\"/usr/include/wchar.h\"},{file=\"/home/dodji/.ccache/fooprog.tmp.tutu.605.ii\"},{file=\"/usr/include/libio.h\",fullname=\"/usr/include/libio.h\"},{file=\"/usr/include/stdio.h\",fullname=\"/usr/include/stdio.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/include/stddef.h\",fullname=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/include/stddef.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/debug/debug.h\",fullname=\"/usr/include/c++/4.3.2/debug/debug.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/cpp_type_traits.h\",fullname=\"/usr/include/c++/4.3.2/bits/cpp_type_traits.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/cwctype\",fullname=\"/usr/include/c++/4.3.2/cwctype\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.h\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/ios_base.h\",fullname=\"/usr/include/c++/4.3.2/bits/ios_base.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/clocale\",fullname=\"/usr/include/c++/4.3.2/clocale\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/cstdio\",fullname=\"/usr/include/c++/4.3.2/cstdio\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/cwchar\",fullname=\"/usr/include/c++/4.3.2/cwchar\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/cstddef\",fullname=\"/usr/include/c++/4.3.2/cstddef\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/iostream\",fullname=\"/usr/include/c++/4.3.2/iostream\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/iostream\",fullname=\"/usr/include/c++/4.3.2/iostream\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/list.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/list.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algo.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algo.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-proc-mgr.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_types.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_types.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_list.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_list.h\"},{file=\"nmv-proc-mgr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-proc-mgr.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-proc-mgr.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-proc-utils.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.h\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/refptr.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/refptr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/backward/auto_ptr.h\",fullname=\"/usr/include/c++/4.3.2/backward/auto_ptr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"nmv-proc-utils.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-proc-utils.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"nmv-delete-statement.cc\"},{file=\"nmv-sql-statement.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-delete-statement.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-delete-statement.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"nmv-insert-statement.cc\"},{file=\"nmv-sql-statement.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-insert-statement.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-insert-statement.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-sql-statement.cc\"},{file=\"nmv-sql-statement.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-sql-statement.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_funcs.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_funcs.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_types.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_types.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/deque.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/deque.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_stack.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_stack.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"nmv-transaction.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_deque.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_deque.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-transaction.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-transaction.cc\"},{file=\"nmv-tools.cc\"},{file=\"nmv-transaction.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-buffer.h\"},{file=\"nmv-tools.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-tools.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"nmv-conf-manager.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_pair.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_pair.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_map.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_map.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\"},{file=\"nmv-libxml-utils.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_tree.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_tree.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/ios_base.h\",fullname=\"/usr/include/c++/4.3.2/bits/ios_base.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-conf-manager.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-conf-manager.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"nmv-parsing-utils.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-parsing-utils.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-parsing-utils.cc\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-connection.cc\"},{file=\"nmv-connection.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-connection.cc\"},{file=\"nmv-dynamic-module.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"nmv-connection-manager.cc\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-i-connection-manager-driver.h\"},{file=\"nmv-connection-manager.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-connection-manager.cc\"},{file=\"nmv-option-utils.cc\"},{file=\"nmv-option-utils.h\"},{file=\"nmv-option-utils.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-option-utils.cc\"},{file=\"nmv-sequence.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"nmv-sequence.cc\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-sequence.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-sequence.cc\"},{file=\"nmv-dynamic-module.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_funcs.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_funcs.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_types.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_types.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_pair.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_pair.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_map.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_map.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"nmv-plugin.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_tree.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_tree.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\"},{file=\"nmv-plugin.h\"},{file=\"nmv-libxml-utils.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/fileutils.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/fileutils.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-plugin.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-plugin.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\"},{file=\"nmv-env.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-env.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-env.cc\"},{file=\"nmv-date-utils.cc\"},{file=\"nmv-date-utils.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-date-utils.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"nmv-dynamic-module.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_pair.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_pair.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.h\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_map.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_map.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"nmv-dynamic-module.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_tree.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_tree.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\"},{file=\"nmv-libxml-utils.h\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-dynamic-module.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-dynamic-module.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"nmv-initializer.cc\"},{file=\"nmv-initializer.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-initializer.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-exception.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/stdexcept\",fullname=\"/usr/include/c++/4.3.2/stdexcept\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/exception\",fullname=\"/usr/include/c++/4.3.2/exception\"},{file=\"nmv-exception.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-exception.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-scope-logger.cc\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-scope-logger.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-scope-logger.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/tr1_impl/unordered_map\",fullname=\"/usr/include/c++/4.3.2/tr1_impl/unordered_map\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/list.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/list.tcc\"},{file=\"/usr/include/glibmm-2.4/glibmm/thread.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/thread.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.h\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/char_traits.h\",fullname=\"/usr/include/c++/4.3.2/bits/char_traits.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/iostream\",fullname=\"/usr/include/c++/4.3.2/iostream\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_funcs.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_funcs.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_types.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_types.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/tr1_impl/hashtable\",fullname=\"/usr/include/c++/4.3.2/tr1_impl/hashtable\"},{file=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/arrayhandle.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_list.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_list.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_pair.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_pair.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/containerhandle_shared.h\"},{file=\"nmv-log-stream.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/tr1_impl/hashtable_policy.h\",fullname=\"/usr/include/c++/4.3.2/tr1_impl/hashtable_policy.h\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/ios_base.h\",fullname=\"/usr/include/c++/4.3.2/bits/ios_base.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-log-stream.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-log-stream.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"nmv-libxml-utils.cc\"},{file=\"nmv-libxml-utils.h\"},{file=\"nmv-libxml-utils.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-libxml-utils.cc\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_pair.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_pair.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_map.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_map.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"nmv-object.cc\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_tree.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_tree.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"nmv-object.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-object.cc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/vector.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/vector.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_uninitialized.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_uninitialized.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.tcc\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.tcc\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_funcs.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_funcs.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator_base_types.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator_base_types.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/type_traits.h\",fullname=\"/usr/include/c++/4.3.2/ext/type_traits.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_algobase.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_algobase.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_construct.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_construct.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_function.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_function.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/char_traits.h\",fullname=\"/usr/include/c++/4.3.2/bits/char_traits.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/basic_string.h\",fullname=\"/usr/include/c++/4.3.2/bits/basic_string.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/allocator.h\",fullname=\"/usr/include/c++/4.3.2/bits/allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/new_allocator.h\",fullname=\"/usr/include/c++/4.3.2/ext/new_allocator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_iterator.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_iterator.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/bits/stl_vector.h\",fullname=\"/usr/include/c++/4.3.2/bits/stl_vector.h\"},{file=\"nmv-ustring.cc\"},{file=\"nmv-safe-ptr-utils.h\"},{file=\"nmv-safe-ptr.h\"},{file=\"/usr/include/glibmm-2.4/glibmm/ustring.h\",fullname=\"/usr/include/glibmm-2.4/glibmm/ustring.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/new\",fullname=\"/usr/include/c++/4.3.2/new\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/ext/atomicity.h\",fullname=\"/usr/include/c++/4.3.2/ext/atomicity.h\"},{file=\"/usr/lib/gcc/x86_64-redhat-linux/4.3.2/../../../../include/c++/4.3.2/x86_64-redhat-linux/bits/gthr-default.h\",fullname=\"/usr/include/c++/4.3.2/x86_64-redhat-linux/bits/gthr-default.h\"},{file=\"nmv-ustring.cc\",fullname=\"/home/dodji/devel/git/nemiver.git/src/common/nmv-ustring.cc\"}]";
 
-void
-test_str0 ()
+BOOST_AUTO_TEST_SUITE (gdmi_tests)
+
+BOOST_AUTO_TEST_CASE (test_str0)
 {
     bool is_ok =false;
 
@@ -202,8 +203,7 @@ test_str0 ()
     BOOST_REQUIRE (res == "abracadabra");
 }
 
-void
-test_str1 ()
+BOOST_AUTO_TEST_CASE (test_str1)
 {
     bool is_ok =false;
 
@@ -218,8 +218,7 @@ test_str1 ()
     BOOST_REQUIRE_MESSAGE (res.size () == 32, "res size was: " << res.size ());
 }
 
-void
-test_str2 ()
+BOOST_AUTO_TEST_CASE (test_str2)
 {
     bool is_ok =false;
 
@@ -234,8 +233,7 @@ test_str2 ()
     BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
 }
 
-void
-test_str3 ()
+BOOST_AUTO_TEST_CASE (test_str3)
 {
     bool is_ok =false;
 
@@ -250,8 +248,7 @@ test_str3 ()
     BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
 }
 
-void
-test_str4 ()
+BOOST_AUTO_TEST_CASE (test_str4)
 {
     bool is_ok =false;
 
@@ -267,8 +264,7 @@ test_str4 ()
 }
 
 
-void
-test_attr0 ()
+BOOST_AUTO_TEST_CASE (test_attr0)
 {
     bool is_ok =false;
 
@@ -292,8 +288,7 @@ test_attr0 ()
 
 }
 
-void
-test_stoppped_async_output ()
+BOOST_AUTO_TEST_CASE (test_stoppped_async_output)
 {
     bool is_ok=false, got_frame=false;
     UString::size_type to=0;
@@ -317,8 +312,7 @@ test_stoppped_async_output ()
     BOOST_REQUIRE (attrs.size ());
 }
 
-void
-test_running_async_output ()
+BOOST_AUTO_TEST_CASE (test_running_async_output)
 {
     bool is_ok=false;
     UString::size_type to=0;
@@ -338,8 +332,7 @@ test_running_async_output ()
     BOOST_REQUIRE (thread_id == 1);
 }
 
-void
-test_var_list_children ()
+BOOST_AUTO_TEST_CASE (test_var_list_children)
 {
 
     GDBMIParser parser (gv_var_list_children0);
@@ -352,8 +345,7 @@ test_var_list_children ()
     BOOST_REQUIRE (vars.size () == 2);
 }
 
-void
-test_output_record ()
+BOOST_AUTO_TEST_CASE (test_output_record)
 {
     bool is_ok=false;
     UString::size_type to=0;
@@ -456,8 +448,7 @@ test_output_record ()
     }
 }
 
-void
-test_stack0 ()
+BOOST_AUTO_TEST_CASE (test_stack0)
 {
     UString::size_type to = 0;
     GDBMIParser parser (gv_stack0);
@@ -475,8 +466,7 @@ test_stack0 ()
     }
 }
 
-void
-test_stack_arguments0 ()
+BOOST_AUTO_TEST_CASE (test_stack_arguments0)
 {
     bool is_ok=false;
     UString::size_type to;
@@ -495,8 +485,7 @@ test_stack_arguments0 ()
     BOOST_REQUIRE (!variable->members ().empty ());
 }
 
-void
-test_stack_arguments1 ()
+BOOST_AUTO_TEST_CASE (test_stack_arguments1)
 {
     bool is_ok=false;
     UString::size_type to;
@@ -516,8 +505,7 @@ test_stack_arguments1 ()
     BOOST_REQUIRE (variable->members ().empty ());
 }
 
-void
-test_local_vars ()
+BOOST_AUTO_TEST_CASE (test_local_vars)
 {
     bool is_ok=false;
     UString::size_type to=0;
@@ -533,8 +521,7 @@ test_local_vars ()
     BOOST_REQUIRE (var->type () == "Person");
 }
 
-void
-test_member_variable ()
+BOOST_AUTO_TEST_CASE (test_member_variable)
 {
     {
         UString::size_type to = 0;
@@ -557,8 +544,7 @@ test_member_variable ()
     }
 }
 
-void
-test_var_with_member_variable ()
+BOOST_AUTO_TEST_CASE (test_var_with_member_variable)
 {
     UString::size_type to = 0;
     IDebugger::VariableSafePtr var (new IDebugger::Variable);
@@ -611,8 +597,7 @@ test_var_with_member_variable ()
     BOOST_REQUIRE (!var->members ().empty ());
 }
 
-void
-test_var_with_comma ()
+BOOST_AUTO_TEST_CASE (test_var_with_comma)
 {
     // gdb sometimes returns values that don't exactly conform to spec, for
     // instance, for function pointers, it appends the name and signature of the
@@ -641,8 +626,7 @@ test_var_with_comma ()
     BOOST_REQUIRE_EQUAL("0x40085e <my_func(void*, void*)>", var->value ());
 }
 
-void
-test_embedded_string ()
+BOOST_AUTO_TEST_CASE (test_embedded_string)
 {
     UString::size_type to = 0;
     UString str;
@@ -650,8 +634,7 @@ test_embedded_string ()
     BOOST_REQUIRE (parser.parse_embedded_c_string (0, to, str));
 }
 
-void
-test_overloads_prompt ()
+BOOST_AUTO_TEST_CASE (test_overloads_prompt)
 {
     vector<IDebugger::OverloadsChoiceEntry> prompts;
     UString::size_type cur = 0;
@@ -669,8 +652,7 @@ test_overloads_prompt ()
                            "actually got " << prompts.size ());
 }
 
-void
-test_register_names ()
+BOOST_AUTO_TEST_CASE (test_register_names)
 {
     std::map<IDebugger::register_id_t, UString> regs;
     UString::size_type cur = 0;
@@ -731,8 +713,7 @@ test_register_names ()
     BOOST_REQUIRE_EQUAL (regs[49], "mm7");
 }
 
-void
-test_changed_registers ()
+BOOST_AUTO_TEST_CASE (test_changed_registers)
 {
     std::list<IDebugger::register_id_t> regs;
     UString::size_type cur = 0;
@@ -761,8 +742,7 @@ test_changed_registers ()
     BOOST_REQUIRE_EQUAL (*reg_iter++, 41u);
 }
 
-void
-test_register_values ()
+BOOST_AUTO_TEST_CASE (test_register_values)
 {
     std::map<IDebugger::register_id_t, UString> reg_values;
     UString::size_type cur = 0;
@@ -806,8 +786,7 @@ test_register_values ()
     BOOST_REQUIRE_EQUAL ((reg_iter)->second, "{v4_float = {0x0, 0x0, 0x0, 0x0}, v2_double = {0x0, 0x0}, v16_int8 = {0x0 <repeats 16 times>}, v8_int16 = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0}, v4_int32 = {0x0, 0x0, 0x0, 0x0}, v2_int64 = {0x0, 0x0}, uint128 = 0x00000000000000000000000000000000}");
 }
 
-void
-test_memory_values ()
+BOOST_AUTO_TEST_CASE (test_memory_values)
 {
     std::vector<uint8_t> mem_values;
     size_t start_addr;
@@ -827,8 +806,7 @@ test_memory_values ()
     BOOST_REQUIRE_EQUAL (*mem_iter, 0x13u);
 }
 
-void
-test_gdbmi_result ()
+BOOST_AUTO_TEST_CASE (test_gdbmi_result)
 {
     GDBMIResultSafePtr result;
     UString::size_type cur = 0;
@@ -855,8 +833,7 @@ test_gdbmi_result ()
                    && result->variable () == "variable");
 }
 
-void
-test_breakpoint_table ()
+BOOST_AUTO_TEST_CASE (test_breakpoint_table)
 {
     std::map<string, IDebugger::Breakpoint> breakpoints;
     UString::size_type cur = 0;
@@ -903,8 +880,7 @@ test_breakpoint_table ()
     BOOST_REQUIRE (parser.parse_breakpoint_table (cur, cur, breakpoints));
 }
 
-void
-test_breakpoint ()
+BOOST_AUTO_TEST_CASE (test_breakpoint)
 {
     IDebugger::Breakpoint breakpoint;
 
@@ -949,8 +925,7 @@ test_breakpoint ()
     BOOST_REQUIRE_EQUAL (breakpoint.sub_breakpoints ()[9].id (), "2.10");
 }
 
-void
-test_disassemble ()
+BOOST_AUTO_TEST_CASE (test_disassemble)
 {
     typedef list<common::Asm> AsmInstrList;
     AsmInstrList instrs;
@@ -1000,8 +975,7 @@ test_disassemble ()
     BOOST_REQUIRE (instrs.front ().empty ());
 }
 
-void
-test_file_list ()
+BOOST_AUTO_TEST_CASE (test_file_list)
 {
     UString::size_type from=0, to=0;
     std::vector<UString> files;
@@ -1016,48 +990,16 @@ test_file_list ()
 
 using boost::unit_test::test_suite;
 
-NEMIVER_API test_suite*
-init_unit_test_suite (int argc, char **argv)
+NEMIVER_API bool init_unit_test ()
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     nemiver::common::Initializer::do_init ();
 
-    test_suite *suite = BOOST_TEST_SUITE ("GDBMI tests");
-    suite->add (BOOST_TEST_CASE (&test_str0));
-    suite->add (BOOST_TEST_CASE (&test_str1));
-    suite->add (BOOST_TEST_CASE (&test_str2));
-    suite->add (BOOST_TEST_CASE (&test_str3));
-    suite->add (BOOST_TEST_CASE (&test_str4));
-    suite->add (BOOST_TEST_CASE (&test_attr0));
-    suite->add (BOOST_TEST_CASE (&test_stoppped_async_output));
-    suite->add (BOOST_TEST_CASE (&test_running_async_output));
-    suite->add (BOOST_TEST_CASE (&test_var_list_children));
-    suite->add (BOOST_TEST_CASE (&test_output_record));
-    suite->add (BOOST_TEST_CASE (&test_stack0));
-    suite->add (BOOST_TEST_CASE (&test_stack_arguments0));
-    suite->add (BOOST_TEST_CASE (&test_stack_arguments1));
-    suite->add (BOOST_TEST_CASE (&test_local_vars));
-    suite->add (BOOST_TEST_CASE (&test_member_variable));
-    suite->add (BOOST_TEST_CASE (&test_var_with_member_variable));
-    suite->add (BOOST_TEST_CASE (&test_var_with_comma));
-    suite->add (BOOST_TEST_CASE (&test_embedded_string));
-    suite->add (BOOST_TEST_CASE (&test_overloads_prompt));
-    suite->add (BOOST_TEST_CASE (&test_register_names));
-    suite->add (BOOST_TEST_CASE (&test_changed_registers));
-    suite->add (BOOST_TEST_CASE (&test_register_values));
-    suite->add (BOOST_TEST_CASE (&test_memory_values));
-    suite->add (BOOST_TEST_CASE (&test_gdbmi_result));
-    suite->add (BOOST_TEST_CASE (&test_breakpoint_table));
-    suite->add (BOOST_TEST_CASE (&test_breakpoint));
-    suite->add (BOOST_TEST_CASE (&test_disassemble));
-    suite->add (BOOST_TEST_CASE (&test_file_list));
-    return suite;
 
     NEMIVER_CATCH_NOX
 
     return 0;
 }
 
+BOOST_AUTO_TEST_SUITE_END()

@@ -17,7 +17,9 @@ using nemiver::common::wstring_to_ustring;
 
 gunichar s_wstr[] = {230, 231, 232, 233, 234, 0};
 
-void test_wstring_to_ustring ()
+BOOST_AUTO_TEST_SUITE (test_unicode)
+
+BOOST_AUTO_TEST_CASE (test_wstring_to_ustring)
 {
     UString utf8_str;
     BOOST_REQUIRE (wstring_to_ustring (s_wstr, utf8_str));
@@ -29,7 +31,7 @@ void test_wstring_to_ustring ()
     }
 }
 
-void test_ustring_to_wstring ()
+BOOST_AUTO_TEST_CASE (test_ustring_to_wstring)
 {
     UString utf8_str;
     BOOST_REQUIRE (wstring_to_ustring (s_wstr, utf8_str));
@@ -40,23 +42,15 @@ void test_ustring_to_wstring ()
     BOOST_REQUIRE (!wstr.compare (0, wstr.size (), s_wstr));
 }
 
-using boost::unit_test::test_suite;
-
-NEMIVER_API test_suite*
-init_unit_test_suite (int argc, char** argv)
+NEMIVER_API bool init_unit_test ()
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
-
-    test_suite *suite = BOOST_TEST_SUITE ("Unicode tests");
-    suite->add (BOOST_TEST_CASE (&test_wstring_to_ustring));
-    suite->add (BOOST_TEST_CASE (&test_ustring_to_wstring));
-    return suite;
 
     NEMIVER_CATCH_NOX
 
     return 0;
 }
+
+BOOST_AUTO_TEST_SUITE_END()
