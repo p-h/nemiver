@@ -207,7 +207,7 @@ threads_LDADD=@NEMIVERCOMMON_LIBS@
 AM_CPPFLAGS=-I$(top_srcdir)/src \
 -I$(top_srcdir)/src/confmgr \
 -I$(top_srcdir)/src/dbgengine \
-@NEMIVERCOMMON_CFLAGS@ -DBOOST_TEST_DYN_LINK \
+@NEMIVERCOMMON_CFLAGS@ -DBOOST_TEST_DYN_LINK -DBOOST_TEST_MAIN \
 -DNEMIVER_SRCDIR=\"$(top_srcdir)\" \
 -DNEMIVER_BUILDDIR=\"$(top_builddir)\"
 

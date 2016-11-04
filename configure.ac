@@ -290,17 +290,10 @@ AC_CHECK_HEADERS([pty.h util.h libutil.h])
 #boost that is installed.
 #######################################################
 if test x$ENABLE_AUTOTESTS = xyes ; then
-    AX_BOOST_BASE([1.33.1])
-    AX_BOOST_UNIT_TEST_FRAMEWORK
-    AX_BOOST_TEST_EXEC_MONITOR
+    BOOST_REQUIRE([1.35])
+    BOOST_TEST([mt])
 
-    unit_framework_lib_candidates="$BOOSTLIBDIR/libboost_unit_test_framework-st.a $BOOSTLIBDIR/libboost_unit_test_framework.a"
-    for i in $unit_framework_lib_candidates ; do
-        if test -f $i ; then
-            BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB=$i
-            break
-        fi
-    done
+    BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB=$BOOST_UNIT_TEST_FRAMEWORK_LIBS
     AC_SUBST(BOOST_UNIT_TEST_FRAMEWORK_STATIC_LIB)
 fi
 
