@@ -29,7 +29,6 @@
 #include <signal.h>
 #include <termios.h>
 #include <sstream>
-#include <boost/variant.hpp>
 #include <algorithm>
 #include <memory>
 #include <fstream>

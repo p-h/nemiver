@@ -26,7 +26,6 @@
 #define __NMV_CONF_MGR_H__
 
 #include "config.h"
-#include <boost/variant.hpp>
 #include <list>
 #include "common/nmv-dynamic-module.h"
 #include "common/nmv-env.h"
