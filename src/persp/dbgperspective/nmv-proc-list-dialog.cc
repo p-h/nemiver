@@ -167,6 +167,12 @@ public:
                 (*this, &Priv::on_row_activated_signal));
     }
 
+    /// Cell data func callback to retrieve the application icon for the process.
+    ///
+    /// \param a_cell the CellRenderer as passed to the call back.
+    ///
+    /// \param a_iter the iter for the cell to fetch data for.
+    ///
     void
     proc_args_cell_data_func (Gtk::CellRenderer *a_cell,
                               const Gtk::TreeModel::iterator &a_iter)
