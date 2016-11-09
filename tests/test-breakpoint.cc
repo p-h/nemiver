@@ -7,6 +7,7 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-debugger.h"
 #include "nmv-debugger-utils.h"
+#include "test-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -29,9 +30,13 @@ on_program_finished_signal ()
 {
     MESSAGE ("program finished");
     MESSAGE ("nb of breakpoint hit: " <<  (int)nb_bp);
-    BOOST_REQUIRE(nb_bp == 1007);
-    BOOST_REQUIRE(nb_stops > 1007);
-    loop->quit ();
+    try {
+        BOOST_REQUIRE(nb_bp == 1007);
+        BOOST_REQUIRE(nb_stops > 1007);
+    } catch(...) {
+        loop->quit ();
+        throw;
+    }
 }
 
 void
@@ -255,8 +260,13 @@ test_main (int argc, char *argv[])
     debugger->set_breakpoint ("func2");
     debugger->set_breakpoint ("func4");
     debugger->set_breakpoint ("Person::overload");
+
     debugger->run ();
+
+    NEMIVER_SETUP_TIMEOUT (loop, 10);
     loop->run ();
+
+    NEMIVER_CHECK_NO_TIMEOUT;
 
     NEMIVER_CATCH_NOX
 

@@ -59,7 +59,7 @@ forkchild_LDADD=
 prettyprint_SOURCES=pretty-print.cc
 prettyprint_LDADD=
 
-runtestbreakpoint_SOURCES=test-breakpoint.cc
+runtestbreakpoint_SOURCES=test-breakpoint.cc test-utils.h
 runtestbreakpoint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
@@ -79,12 +79,12 @@ runtestvarobjwalker_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
-runtestvariableformat_SOURCES=test-variable-format.cc
+runtestvariableformat_SOURCES=test-variable-format.cc test-utils.h
 runtestvariableformat_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
-runtestprettyprint_SOURCES=test-pretty-print.cc
+runtestprettyprint_SOURCES=test-pretty-print.cc test-utils.h
 runtestprettyprint_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
@@ -128,17 +128,17 @@ runtestvarlist_LDADD=@NEMIVERCOMMON_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
-runtestvarwalker_SOURCES=test-var-walker.cc
+runtestvarwalker_SOURCES=test-var-walker.cc test-utils.h
 runtestvarwalker_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
-runtestderef_SOURCES=test-deref.cc
+runtestderef_SOURCES=test-deref.cc test-utils.h
 runtestderef_LDADD=@NEMIVERCOMMON_LIBS@ \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la
 
-runtestlocalvarslist_SOURCES=test-local-vars-list.cc
+runtestlocalvarslist_SOURCES=test-local-vars-list.cc test-utils.h
 runtestlocalvarslist_LDADD=@NEMIVERCOMMON_LIBS@  \
 $(top_builddir)/src/common/libnemivercommon.la \
 $(top_builddir)/src/dbgengine/libdebuggerutils.la

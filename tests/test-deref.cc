@@ -6,6 +6,7 @@
 #include "nmv-i-lang-trait.h"
 #include "common/nmv-initializer.h"
 #include "nmv-debugger-utils.h"
+#include "test-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -158,9 +159,12 @@ test_main (int argc, char **argv)
     vector<UString> args;
     debugger->load_program (".libs/pointerderef", args, ".");
     debugger->set_breakpoint ("main");
-    debugger->run ();
 
+    NEMIVER_SETUP_TIMEOUT (loop, 10);
     loop->run ();
+
+    NEMIVER_CHECK_NO_TIMEOUT;
+
     NEMIVER_CATCH_AND_RETURN_NOX(-1)
     return 0;
 }

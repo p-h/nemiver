@@ -214,7 +214,13 @@ BOOST_AUTO_TEST_CASE (test_str1)
     is_ok = parser.parse_c_string (0, to, res);
 
     BOOST_REQUIRE (is_ok);
+
+    NEMIVER_TRY
+
     MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'");
+
+    NEMIVER_CATCH_NOX
+
     BOOST_REQUIRE_MESSAGE (res.size () == 32, "res size was: " << res.size ());
 }
 
@@ -244,7 +250,12 @@ BOOST_AUTO_TEST_CASE (test_str3)
     is_ok = parser.parse_c_string (0, to, res);
 
     BOOST_REQUIRE (is_ok);
+    NEMIVER_TRY
+
     MESSAGE ("got string: '" << Glib::locale_from_utf8 (res) << "'");
+
+    NEMIVER_CATCH_NOX
+
     BOOST_REQUIRE_MESSAGE (res.size (), "res size was: " << res.size ());
 }
 

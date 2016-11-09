@@ -7,6 +7,7 @@
 #include "common/nmv-initializer.h"
 #include "common/nmv-exception.h"
 #include "nmv-debugger-utils.h"
+#include "test-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -197,7 +198,11 @@ test_main (int, char **)
     //****************************************
     //run the event loop.
     //****************************************
+    NEMIVER_SETUP_TIMEOUT (s_loop, 10);
     s_loop->run ();
+
+    // we shouldn't have timeout.
+    NEMIVER_CHECK_NO_TIMEOUT;
 
     v_var.reset ();
     NEMIVER_CATCH_AND_RETURN_NOX (-1);

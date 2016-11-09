@@ -9,6 +9,7 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list-walker.h"
 #include "nmv-debugger-utils.h"
+#include "test-utils.h"
 
 using namespace nemiver;
 using namespace nemiver::common;
@@ -45,12 +46,16 @@ static void
 on_var_evaluated (const IDebugger::VariableSafePtr a_var,
 		  IDebuggerSafePtr /*a_debugger*/)
 {
-    BOOST_REQUIRE (a_var);
-    BOOST_REQUIRE (a_var->format () ==
-		   IDebugger::Variable::HEXADECIMAL_FORMAT);
-    BOOST_REQUIRE (a_var->value () == "0x12");
-    s_got_value = true;
-    s_loop->quit ();
+    try {
+        BOOST_REQUIRE (a_var);
+        BOOST_REQUIRE (a_var->format () ==
+                       IDebugger::Variable::HEXADECIMAL_FORMAT);
+        BOOST_REQUIRE (a_var->value () == "0x12");
+        s_got_value = true;
+    } catch (...) {
+        s_loop->quit ();
+        throw;
+    }
 }
 
 static void
@@ -138,7 +143,10 @@ test_main (int, char **)
     //****************************************
     //run the event loop.
     //****************************************
+    NEMIVER_SETUP_TIMEOUT(s_loop, 10);
     s_loop->run ();
+
+    NEMIVER_CHECK_NO_TIMEOUT;
 
     NEMIVER_CATCH_AND_RETURN_NOX (-1);
 

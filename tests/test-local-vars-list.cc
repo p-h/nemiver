@@ -6,6 +6,7 @@
 #include "common/nmv-exception.h"
 #include "nmv-i-var-list.h"
 #include "nmv-debugger-utils.h"
+#include "test-utils.h"
 
 using namespace std;
 using namespace nemiver;
@@ -166,7 +167,10 @@ test_main (int argc, char **argv)
     debugger->set_breakpoint ("main");
     debugger->run ();
 
+    NEMIVER_SETUP_TIMEOUT (loop, 10);
     loop->run ();
+    NEMIVER_CHECK_NO_TIMEOUT;
+
     NEMIVER_CATCH_AND_RETURN_NOX (-1);
 
     return 0;
