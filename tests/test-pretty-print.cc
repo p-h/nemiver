@@ -15,7 +15,22 @@ using namespace nemiver::common;
 Glib::RefPtr<Glib::MainLoop> s_loop =
     Glib::MainLoop::create (Glib::MainContext::get_default ());
 
-IDebugger::VariableSafePtr v_var;
+namespace {
+
+/// TestObject will contain the test data
+/// as sigc::bind () is limited in args count
+/// It is a non copyable object.
+struct TestObject {
+  IDebuggerSafePtr debugger;
+  IDebugger::VariableSafePtr v_var;
+
+  TestObject () { };
+
+  /// Prevent copying.
+  TestObject (const TestObject &) = delete;
+};
+
+}
 
 static void
 on_engine_died_signal ()
@@ -37,35 +52,35 @@ on_running_signal ()
 static void
 on_variable_unfolded_with_n_children (const IDebugger::VariableSafePtr a_var,
                                       unsigned n,
-                                      IDebuggerSafePtr a_debugger)
+                                      TestObject & test_object)
 {
     NEMIVER_TRY;
 
     BOOST_REQUIRE (a_var->name () == "v");
     BOOST_REQUIRE (a_var->members ().size () == n);
-    a_debugger->step_over ();
+    test_object.debugger->step_over ();
 
     NEMIVER_CATCH_NOX;
 }
 
 static void
 on_variable_v_created_empty (const IDebugger::VariableSafePtr a_var,
-                             IDebuggerSafePtr a_debugger)
+                             TestObject & test_object)
 {
     NEMIVER_TRY;
 
     BOOST_REQUIRE (a_var->name () == "v");
     BOOST_REQUIRE (a_var->is_dynamic ());
     BOOST_REQUIRE (a_var->members ().empty ());
-    v_var = a_var;
-    a_debugger->step_over ();
+    test_object.v_var = a_var;
+    test_object.debugger->step_over ();
 
     NEMIVER_CATCH_NOX;
 }
 
 static void
 on_variable_v_has_n_children (const std::list<IDebugger::VariableSafePtr> &a_vars,
-                              unsigned n, IDebuggerSafePtr a_debugger)
+                              unsigned n, TestObject & test_object)
 {
     NEMIVER_TRY;
     
@@ -78,11 +93,11 @@ on_variable_v_has_n_children (const std::list<IDebugger::VariableSafePtr> &a_var
         IDebugger::VariableSafePtr var = a_vars.front ();
         BOOST_REQUIRE (var->name () == "v");
         if (var->needs_unfolding ())
-            a_debugger->unfold_variable
+            test_object.debugger->unfold_variable
                 (var, sigc::bind (&on_variable_unfolded_with_n_children,
-                                  1, a_debugger));
+                                  1, sigc::ref (test_object)));
         else
-            a_debugger->step_over ();
+            test_object.debugger->step_over ();
         
     } else {
         // A vars should contain the last updated child of "v", as
@@ -96,7 +111,7 @@ on_variable_v_has_n_children (const std::list<IDebugger::VariableSafePtr> &a_var
         BOOST_REQUIRE (var->name () == "v");
         // And v should contain n children.
         BOOST_REQUIRE (var->members ().size () == n);
-        a_debugger->step_over ();
+        test_object.debugger->step_over ();
     }
 
     NEMIVER_CATCH_NOX;
@@ -108,7 +123,7 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
                    const IDebugger::Frame &a_frame,
                    int, const string &,
                    const UString &/*a_cookie*/,
-                   IDebuggerSafePtr &a_debugger)
+                   TestObject & test_object)
 {
     static int nb_stops_in_main = 0;
 
@@ -120,45 +135,45 @@ on_stopped_signal (IDebugger::StopReason /*a_reason*/,
             ++nb_stops_in_main;
             MESSAGE ("stopped " << nb_stops_in_main << " times in main");
             if (nb_stops_in_main < 3) {
-                a_debugger->step_over ();
+                test_object.debugger->step_over ();
             } else if (nb_stops_in_main == 3) {
                 // We just stopped right after the creation of the v
                 // vector, which is empty for now.
-                a_debugger->create_variable
-                    ("v", sigc::bind (&on_variable_v_created_empty, a_debugger));
+                test_object.debugger->create_variable
+                  ("v", sigc::bind (&on_variable_v_created_empty, sigc::ref (test_object)));
             } else if (nb_stops_in_main == 4) {
                 // We should be stopped right after s1 has been
                 // added to the v vector.
-                BOOST_REQUIRE (v_var);
-                a_debugger->list_changed_variables
-                    (v_var,
+                BOOST_REQUIRE (test_object.v_var);
+                test_object.debugger->list_changed_variables
+                    (test_object.v_var,
                      sigc::bind (&on_variable_v_has_n_children,
                                  1,
-                                 a_debugger));
+                                 sigc::ref (test_object)));
             } else if (nb_stops_in_main == 5) {
                 // We should be stopped right after s2 has been
                 // added to the v vector.
-                BOOST_REQUIRE (v_var);
-                a_debugger->list_changed_variables
-                    (v_var,
+                BOOST_REQUIRE (test_object.v_var);
+                test_object.debugger->list_changed_variables
+                    (test_object.v_var,
                      sigc::bind (&on_variable_v_has_n_children,
                                  2,
-                                 a_debugger));
+                                 sigc::ref (test_object)));
             } else if (nb_stops_in_main == 6) {
                 // We should be stopped right after s3 has been
                 // added to the v vector.
-                BOOST_REQUIRE (v_var);
-                a_debugger->list_changed_variables
-                    (v_var,
+                BOOST_REQUIRE (test_object.v_var);
+                test_object.debugger->list_changed_variables
+                    (test_object.v_var,
                      sigc::bind (&on_variable_v_has_n_children,
                                  3,
-                                 a_debugger));
+                                 sigc::ref (test_object)));
             } else if (nb_stops_in_main){
-                a_debugger->do_continue ();
+                test_object.debugger->do_continue ();
             }
         }
     } else {
-        a_debugger->step_over ();
+        test_object.debugger->step_over ();
     }
 
     NEMIVER_CATCH_NOX;
@@ -171,29 +186,31 @@ test_main (int, char **)
 
     Initializer::do_init ();
 
-    IDebuggerSafePtr debugger =
+    TestObject test_object;
+
+    test_object.debugger =
         debugger_utils::load_debugger_iface_with_confmgr ();
 
     // setup the debugger with the glib mainloop
-    debugger->set_event_loop_context (Glib::MainContext::get_default ());
+    test_object.debugger->set_event_loop_context (Glib::MainContext::get_default ());
 
     //*******************************
     //<connect to IDebugger events>
     //******************************
-    debugger->engine_died_signal ().connect (&on_engine_died_signal);
-    debugger->program_finished_signal ().connect (&on_program_finished_signal);
-    debugger->running_signal ().connect (&on_running_signal);
-    debugger->stopped_signal ().connect (sigc::bind (&on_stopped_signal,
-                                                     debugger));
+    test_object.debugger->engine_died_signal ().connect (&on_engine_died_signal);
+    test_object.debugger->program_finished_signal ().connect (&on_program_finished_signal);
+    test_object.debugger->running_signal ().connect (&on_running_signal);
+    test_object.debugger->stopped_signal ().connect (sigc::bind (&on_stopped_signal,
+                                                     sigc::ref (test_object)));
     //*******************************
     //</connect to IDebugger events>
     //******************************
 
-    debugger->enable_pretty_printing ();
-    debugger->load_program ("prettyprint");
-    debugger->set_breakpoint ("main");
+    test_object.debugger->enable_pretty_printing ();
+    test_object.debugger->load_program ("prettyprint");
+    test_object.debugger->set_breakpoint ("main");
 
-    debugger->run ();
+    test_object.debugger->run ();
 
     //****************************************
     //run the event loop.
@@ -204,7 +221,7 @@ test_main (int, char **)
     // we shouldn't have timeout.
     NEMIVER_CHECK_NO_TIMEOUT;
 
-    v_var.reset ();
+    test_object.v_var.reset ();
     NEMIVER_CATCH_AND_RETURN_NOX (-1);
 
     return 0;
