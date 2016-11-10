@@ -107,8 +107,10 @@ using nemiver::cpp::TemplateIDPtr;
 using nemiver::common::Initializer;
 namespace cpp=nemiver::cpp;
 
-void
-test_parser0 ()
+
+BOOST_AUTO_TEST_SUITE (test_cpp_parser)
+
+BOOST_AUTO_TEST_CASE (test_parser0)
 {
     Parser parser (prog0);
     Parser parser2 (prog0);
@@ -141,8 +143,7 @@ test_parser0 ()
     cout << "Init declarators were: " << str << endl;
 }
 
-void
-test_parser1 ()
+BOOST_AUTO_TEST_CASE (test_parser1)
 {
     string str, prog_str=prog1;
     Parser parser (prog_str);
@@ -171,8 +172,7 @@ test_parser1 ()
     }
 }
 
-void
-test_parser2 ()
+BOOST_AUTO_TEST_CASE (test_parser2)
 {
     Parser parser (prog2);
     string str;
@@ -191,8 +191,7 @@ test_parser2 ()
     }
 }
 
-void
-test_parser3 ()
+BOOST_AUTO_TEST_CASE (test_parser3)
 {
     SimpleDeclarationPtr simple_decl;
     ParserPtr parser;
@@ -216,8 +215,7 @@ test_parser3 ()
     }
 }
 
-void
-test_parser4 ()
+BOOST_AUTO_TEST_CASE (test_parser4)
 {
     ParserPtr parser;
     list<DeclSpecifierPtr> decls;
@@ -239,8 +237,7 @@ test_parser4 ()
     }
 }
 
-void
-test_parser5 ()
+BOOST_AUTO_TEST_CASE (test_parser5)
 {
     string str;
     ExprPtr expr;
@@ -261,8 +258,7 @@ test_parser5 ()
     }
 }
 
-void
-test_parser6 ()
+BOOST_AUTO_TEST_CASE (test_parser6)
 {
     string str, prog_str;
     TemplateIDPtr template_id;
@@ -285,8 +281,7 @@ test_parser6 ()
     }
 }
 
-void
-test_parser7 ()
+BOOST_AUTO_TEST_CASE (test_parser7)
 {
     SimpleDeclarationPtr simple_decl;
     InitDeclaratorPtr init_decl;
@@ -316,29 +311,15 @@ test_parser7 ()
     }
 }
 
-using boost::unit_test::test_suite;
-
-test_suite*
-init_unit_test_suite (int argc, char** argv)
+bool init_unit_test ()
 {
-    if (argc || argv) {/*keep compiler happy*/}
-
     NEMIVER_TRY
 
     Initializer::do_init ();
-
-    test_suite *suite = BOOST_TEST_SUITE ("c++ lexer tests");
-    suite->add (BOOST_TEST_CASE (&test_parser0));
-    suite->add (BOOST_TEST_CASE (&test_parser1));
-    suite->add (BOOST_TEST_CASE (&test_parser2));
-    suite->add (BOOST_TEST_CASE (&test_parser3));
-    suite->add (BOOST_TEST_CASE (&test_parser4));
-    suite->add (BOOST_TEST_CASE (&test_parser5));
-    suite->add (BOOST_TEST_CASE (&test_parser6));
-    suite->add (BOOST_TEST_CASE (&test_parser7));
-    return suite;
 
     NEMIVER_CATCH_NOX
 
     return 0;
 }
+
+BOOST_AUTO_TEST_SUITE_END()
