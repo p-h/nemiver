@@ -33,6 +33,7 @@ on_program_finished_signal ()
     try {
         BOOST_REQUIRE(nb_bp == 1007);
         BOOST_REQUIRE(nb_stops > 1007);
+        loop->quit ();
     } catch(...) {
         loop->quit ();
         throw;
