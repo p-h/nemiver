@@ -2,6 +2,16 @@
 <!-- Generated with glade 3.20.0 -->
 <interface>
   <requires lib="gtk+" version="3.0"/>
+  <object class="GtkFileFilter" id="filefilter_executables">
+    <mime-types>
+      <mime-type>application/x-executable</mime-type>
+    </mime-types>
+  </object>
+  <object class="GtkFileFilter" id="filefilter_coredumps">
+    <mime-types>
+      <mime-type>application/x-core</mime-type>
+    </mime-types>
+  </object>
   <object class="GtkDialog" id="loadcoredialog">
     <property name="width_request">300</property>
     <property name="can_focus">False</property>
@@ -78,6 +88,7 @@
                       <object class="GtkFileChooserButton" id="filechooserbutton_corefile">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="filter">filefilter_coredumps</property>
                         <property name="title" translatable="yes">Select a Core File</property>
                       </object>
                     </child>
@@ -115,6 +126,7 @@
                       <object class="GtkFileChooserButton" id="filechooserbutton_executable">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+			<property name="filter">filefilter_executables</property>
                         <property name="title" translatable="yes">Select the executable that created the core file</property>
                       </object>
                     </child>
