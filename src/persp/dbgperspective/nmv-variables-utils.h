@@ -56,7 +56,7 @@ struct VariableColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<IDebugger::VariableSafePtr> variable;
     Gtk::TreeModelColumn<bool> is_highlighted;
     Gtk::TreeModelColumn<bool> needs_unfolding;
-    Gtk::TreeModelColumn<Gdk::Color> fg_color;
+    Gtk::TreeModelColumn<Gdk::RGBA> fg_color;
     Gtk::TreeModelColumn<bool> variable_value_editable;
 
     VariableColumns ()

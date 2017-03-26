@@ -190,18 +190,14 @@ update_a_variable_node (const IDebugger::VariableSafePtr a_var,
     if (do_highlight) {
         LOG_DD ("do highlight variable");
         (*a_iter)[get_variable_columns ().is_highlighted]=true;
-        (*a_iter)[get_variable_columns ().fg_color] = Gdk::Color ("red");
+        (*a_iter)[get_variable_columns ().fg_color] = Gdk::RGBA ("red");
     } else {
         LOG_DD ("remove highlight from variable");
         (*a_iter)[get_variable_columns ().is_highlighted]=false;
         Gdk::RGBA rgba =
             a_tree_view.get_style_context ()->get_color
                                                   (Gtk::STATE_FLAG_NORMAL);
-        Gdk::Color color;
-        color.set_rgb (rgba.get_red (),
-                       rgba.get_green (),
-                       rgba.get_blue ());
-        (*a_iter)[get_variable_columns ().fg_color] = color;
+        (*a_iter)[get_variable_columns ().fg_color] = rgba;
     }
 
     (*a_iter)[get_variable_columns ().value] = a_var->value ();

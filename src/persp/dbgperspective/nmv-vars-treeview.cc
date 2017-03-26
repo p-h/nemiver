@@ -53,7 +53,7 @@ VarsTreeView::VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model) :
     THROW_IF_FAIL (col);
     col->set_resizable (true);
     col->add_attribute (*col->get_first_cell (),
-                        "foreground-gdk",
+                        "foreground-rgba",
                         vutil::VariableColumns::FG_COLOR_OFFSET);
 
     append_column (_("Value"), vutil::get_variable_columns ().value);
@@ -61,7 +61,7 @@ VarsTreeView::VarsTreeView (Glib::RefPtr<Gtk::TreeStore>& model) :
     THROW_IF_FAIL (col);
     col->set_resizable (true);
     col->add_attribute (*col->get_first_cell (),
-                        "foreground-gdk",
+                        "foreground-rgba",
                         vutil::VariableColumns::FG_COLOR_OFFSET);
     col->add_attribute (*col->get_first_cell (),
                         "editable",

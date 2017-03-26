@@ -38,7 +38,7 @@ struct RegisterColumns : public Gtk::TreeModelColumnRecord {
     Gtk::TreeModelColumn<IDebugger::register_id_t> id;
     Gtk::TreeModelColumn<Glib::ustring> name;
     Gtk::TreeModelColumn<Glib::ustring> value;
-    Gtk::TreeModelColumn<Gdk::Color> fg_color;
+    Gtk::TreeModelColumn<Gdk::RGBA> fg_color;
 
     RegisterColumns ()
     {
@@ -102,7 +102,7 @@ public:
         tree_view->append_column_editable (_("Value"), get_columns ().value);
         Gtk::TreeViewColumn * col = tree_view->get_column (2);
         col->add_attribute (*col->get_first_cell (),
-                            "foreground-gdk",
+                            "foreground-rgba",
                             get_columns ().fg_color);
         Gtk::CellRendererText* renderer =
                 dynamic_cast<Gtk::CellRendererText*>
@@ -280,16 +280,12 @@ public:
     void set_changed (Gtk::TreeModel::iterator& iter, bool changed = true)
     {
         if (changed) {
-            (*iter)[get_columns ().fg_color]  = Gdk::Color ("red");
+            (*iter)[get_columns ().fg_color]  = Gdk::RGBA ("red");
         } else {
             Gdk::RGBA rgba =
                 tree_view->get_style_context ()->get_color
                                                     (Gtk::STATE_FLAG_NORMAL);
-            Gdk::Color color;
-            color.set_rgb (rgba.get_red (),
-                           rgba.get_green (),
-                           rgba.get_blue ());
-            (*iter)[get_columns ().fg_color] = color;
+            (*iter)[get_columns ().fg_color] = rgba;
         }
     }
 
