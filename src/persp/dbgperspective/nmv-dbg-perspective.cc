@@ -3205,7 +3205,7 @@ DBGPerspective::init_actions ()
             _("Run or Restart the target"),
             sigc::mem_fun (*this, &DBGPerspective::on_run_action),
             ActionEntry::DEFAULT,
-            "<shift>F5",
+            "<shift>F9",
             true
         },
         {
@@ -3360,7 +3360,7 @@ DBGPerspective::init_actions ()
             _("Continue program execution until the next breakpoint"),
             sigc::mem_fun (*this, &DBGPerspective::on_continue_action),
             ActionEntry::DEFAULT,
-            "F5",
+            "F9",
             true
         },
         {
@@ -3498,7 +3498,7 @@ DBGPerspective::init_actions ()
             _("Stop the debugger"),
             sigc::mem_fun (*this, &DBGPerspective::on_stop_debugger_action),
             ActionEntry::DEFAULT,
-            "F9",
+            "<control>F2",
             true
         }
     };
