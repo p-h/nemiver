@@ -3245,7 +3245,7 @@ DBGPerspective::init_actions ()
             sigc::mem_fun (*this,
                            &DBGPerspective::on_toggle_breakpoint_action),
             ActionEntry::DEFAULT,
-            "F8",
+            "<control>F8",
             false
         },
         {
@@ -3265,7 +3265,7 @@ DBGPerspective::init_actions ()
                     (*this,
                      &DBGPerspective::on_toggle_breakpoint_enabled_action),
             ActionEntry::DEFAULT,
-            "<shift>F8",
+            "<control><shift>F8",
             false
         },
         {
@@ -3310,7 +3310,7 @@ DBGPerspective::init_actions ()
             _("Execute next line stepping over the next function, if any"),
             sigc::mem_fun (*this, &DBGPerspective::on_next_action),
             ActionEntry::DEFAULT,
-            "F6",
+            "F8",
             false
         },
         {
@@ -3330,7 +3330,7 @@ DBGPerspective::init_actions ()
             _("Finish the execution of the current function"),
             sigc::mem_fun (*this, &DBGPerspective::on_step_out_action),
             ActionEntry::DEFAULT,
-            "<shift>F7",
+            "<shift>F8",
             false
         },
         {
